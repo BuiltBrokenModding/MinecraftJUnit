@@ -225,6 +225,6 @@ public class FrameDebug extends Frame
 
     public World world()
     {
-        return tile.worldObj;
+        return tile.getWorldObj();
     }
 }
