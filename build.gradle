@@ -127,7 +127,6 @@ jar {
             "Implementation-Title": archivesBaseName,
             "Implementation-Version": project.version,
             "Git-Hash": gitHash,
-            "FMLAT": "VE_at.cfg"
     )
 }
 
@@ -156,9 +155,7 @@ repositories {
 dependencies 
 {
     compile 'junit:junit:4.11'
-    compile "com.builtbroken.codinglib:CodingLib:0.0.+:deobf"
-    //compile "mcp.mobius.waila:Waila:1.5.11-RC1_1.7.10"
-    //compile "li.cil.oc:OpenComputers:MC1.7.10-1.4.0.+:dev"
+    compile "com.builtbroken.codinglib:CodingLib:0.0.1b4"
     testRuntime 'org.slf4j:slf4j-simple:1.7.10'
     //compile "net.industrial-craft:industrialcraft-2:2.2.654-experimental:api"
 }
