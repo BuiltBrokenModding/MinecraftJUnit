@@ -24,6 +24,7 @@ public class FakeWorld extends World
 {
     public static boolean blocksInit = false;
     public List<TileEntity> tiles = new ArrayList<TileEntity>();
+    public List<TileEntity> remove_tiles = new ArrayList<TileEntity>();
 
     Data[][][] mapData;
     int size;
@@ -44,6 +45,18 @@ public class FakeWorld extends World
     @Override
     public void updateEntities()
     {
+        if (remove_tiles.size() > 0)
+        {
+            Iterator<TileEntity> tile_iterator = remove_tiles.iterator();
+            while (tile_iterator.hasNext())
+            {
+                TileEntity tile = tile_iterator.next();
+                tile.invalidate();
+                tiles.remove(tile);
+                tile_iterator.remove();
+            }
+
+        }
         Iterator<TileEntity> tile_iterator = tiles.iterator();
         while (tile_iterator.hasNext())
         {
@@ -52,7 +65,8 @@ public class FakeWorld extends World
             {
                 System.out.println("removing invalid tile " + tile_iterator);
                 tile_iterator.remove();
-            } else
+            }
+            else
             {
                 tile.updateEntity();
             }
@@ -97,7 +111,10 @@ public class FakeWorld extends World
                 if (newTile != get(x, y, z).tile)
                 {
                     if (get(x, y, z).tile != null)
+                    {
                         get(x, y, z).tile.invalidate();
+                        remove_tiles.add(get(x, y, z).tile);
+                    }
                     get(x, y, z).tile = newTile;
                     if (newTile != null)
                     {
@@ -117,7 +134,8 @@ public class FakeWorld extends World
             }
 
             return true;
-        } else
+        }
+        else
         {
             throw new RuntimeException("Something Attempted to place a block out side of the test area " + x + "x " + y + "y " + z + "z");
         }
