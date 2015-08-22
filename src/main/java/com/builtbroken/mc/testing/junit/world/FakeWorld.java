@@ -50,9 +50,9 @@ public class FakeWorld extends World
             TileEntity tile = tile_iterator.next();
             if (tile.isInvalid())
             {
+                System.out.println("removing invalid tile " + tile_iterator);
                 tile_iterator.remove();
-            }
-            else
+            } else
             {
                 tile.updateEntity();
             }
@@ -117,8 +117,7 @@ public class FakeWorld extends World
             }
 
             return true;
-        }
-        else
+        } else
         {
             throw new RuntimeException("Something Attempted to place a block out side of the test area " + x + "x " + y + "y " + z + "z");
         }
