@@ -1,6 +1,8 @@
 package com.builtbroken.mc.testing.junit;
 
 import com.google.common.io.Files;
+import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
 import net.minecraft.launchwrapper.Launch;
 import net.minecraft.launchwrapper.LaunchClassLoader;
 import org.junit.Test;
@@ -17,19 +19,22 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
-* Test runner for Voltz Engine Unit tests. 
-* As a note for Minecraft Mod developers. You are welcome to copy this Unit test and included it in your projects. So long
-* as you provide credit to any develop that works on the file. As well do not profit off the project or violate any EULA or laws.
-*
-* @author Darkguardsman
-*/
+ * Test runner for Voltz Engine Unit tests.
+ * As a note for Minecraft Mod developers. You are welcome to copy this Unit test and included it in your projects. So long
+ * as you provide credit to any develop that works on the file. As well do not profit off the project or violate any EULA or laws.
+ *
+ * @author Darkguardsman
+ */
 public class VoltzTestRunner extends Runner
 {
+    protected static LaunchClassLoader loader;
+
     protected Class<? extends AbstractTest> clazz;
-    protected LaunchClassLoader loader;
     protected Object test;
     protected Class<?> test_class;
     protected HashMap<Method, Description> testMethods = new HashMap();
@@ -49,20 +54,50 @@ public class VoltzTestRunner extends Runner
     {
         try
         {
-            // Setup data
             Object[] data = new Object[]{"", "", "", "", "1.7.10", "", Files.createTempDir(), Collections.EMPTY_LIST};
-            URL[] urLs = ((URLClassLoader) Launch.class.getClassLoader()).getURLs();
-            loader = new LaunchClassLoader(urLs);
+            // Setup data
+            if (loader == null)
+            {
+                URL[] urLs = ((URLClassLoader) Launch.class.getClassLoader()).getURLs();
+                loader = new LaunchClassLoader(urLs);
 
-            Class<?> itemz = loader.loadClass("cpw.mods.fml.relauncher.FMLRelaunchLog");
-            Field mz = itemz.getDeclaredField("side");
-            mz.setAccessible(true);
+                Class<?> itemz = loader.loadClass("cpw.mods.fml.relauncher.FMLRelaunchLog");
+                Field mz = itemz.getDeclaredField("side");
+                mz.setAccessible(true);
 
-            mz.set(itemz, Enum.valueOf((Class<Enum>) mz.getType(), "CLIENT"));
+                mz.set(itemz, Enum.valueOf((Class<Enum>) mz.getType(), "CLIENT"));
 
-            Class<?> item1 = loader.loadClass("cpw.mods.fml.common.Loader");
-            Method m1 = item1.getMethod("injectData", Object[].class);
-            m1.invoke(null, new Object[]{data});
+                Class<?> item1 = loader.loadClass("cpw.mods.fml.common.Loader");
+                Method m1 = item1.getMethod("injectData", Object[].class);
+                m1.invoke(null, new Object[]{data});
+
+                try
+                {
+                    Class<?> bootstrap = loader.loadClass("net.minecraft.init.Bootstrap");
+                    bootstrap.getMethod("func_151354_b").invoke(null);
+                } catch (Exception e)
+                {
+                    e.printStackTrace();
+                    if (e instanceof NullPointerException)
+                    {
+                        System.out.println("BlockReg: " + Block.blockRegistry + "  Size: " + Block.blockRegistry.getKeys().size());
+
+                        Field[] fields = Blocks.class.getDeclaredFields();
+                        System.out.println("Fields: " + fields.length);
+                        for (Field field : fields)
+                        {
+                            try
+                            {
+                                System.out.println(field.getName() + ": " + field.get(null));
+                            } catch (IllegalAccessException e1)
+                            {
+                                e1.printStackTrace();
+                            }
+                        }
+                    }
+                    throw new RuntimeException(e);
+                }
+            }
 
             test_class = loader.loadClass(clazz.getName());
             test = test_class.newInstance();
@@ -131,8 +166,7 @@ public class VoltzTestRunner extends Runner
                     setUp.invoke(test, name);
                     method.invoke(test);
                     tearDown.invoke(test, name);
-                }
-                catch (Exception e)
+                } catch (Exception e)
                 {
                     Throwable cause = e;
                     if (e instanceof InvocationTargetException)
@@ -149,8 +183,7 @@ public class VoltzTestRunner extends Runner
             //Clean up data for the entire test class
             tearDownClass.invoke(test);
 
-        }
-        catch (InvocationTargetException e)
+        } catch (InvocationTargetException e)
         {
             e.printStackTrace();
         } catch (IllegalAccessException e)

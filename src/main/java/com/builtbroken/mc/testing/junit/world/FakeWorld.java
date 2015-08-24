@@ -1,6 +1,5 @@
 package com.builtbroken.mc.testing.junit.world;
 
-import com.builtbroken.mc.testing.junit.ModRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
@@ -39,7 +38,6 @@ public class FakeWorld extends World
         super(null, "FakeWorld", new FakeWorldProvider(), new WorldSettings(new WorldInfo(new NBTTagCompound())), new Profiler());
         this.size = size;
         mapData = new Data[size + size + 1][256][size + size + 1];
-        ModRegistry.init();
     }
 
     @Override

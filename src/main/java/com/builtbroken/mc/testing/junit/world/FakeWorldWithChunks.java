@@ -1,12 +1,12 @@
 package com.builtbroken.mc.testing.junit.world;
 
-import com.builtbroken.mc.testing.junit.ModRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.profiler.Profiler;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldProvider;
 import net.minecraft.world.WorldSettings;
+import net.minecraft.world.WorldType;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.storage.WorldInfo;
@@ -17,10 +17,21 @@ import net.minecraft.world.storage.WorldInfo;
  */
 public class FakeWorldWithChunks extends World
 {
-    public FakeWorldWithChunks()
+    protected WorldInfo worldInfo;
+    protected WorldSettings settings;
+
+    public FakeWorldWithChunks(FakeWorldSaveHandler handler, WorldSettings settings, WorldInfo info, WorldProvider provider)
     {
-        super(null, "FakeWorld", new FakeWorldProvider(), new WorldSettings(new WorldInfo(new NBTTagCompound())), new Profiler());
-        ModRegistry.init();
+        super(handler, "FakeWorld", settings, provider, new Profiler());
+        this.worldInfo = info;
+    }
+
+    public static FakeWorldWithChunks newWorld(String name)
+    {
+        WorldSettings settings = new WorldSettings(0, WorldSettings.GameType.SURVIVAL, false, false, WorldType.FLAT);
+        WorldInfo worldInfo = new WorldInfo(settings, name);
+        FakeWorldSaveHandler handler = new FakeWorldSaveHandler(worldInfo);
+        return new FakeWorldWithChunks(handler, settings, worldInfo, new FakeWorldProvider());
     }
 
     @Override

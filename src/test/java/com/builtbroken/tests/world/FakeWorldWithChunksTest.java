@@ -2,11 +2,11 @@ package com.builtbroken.tests.world;
 
 import com.builtbroken.mc.testing.junit.AbstractTest;
 import com.builtbroken.mc.testing.junit.VoltzTestRunner;
+import com.builtbroken.mc.testing.junit.world.FakeWorldWithChunks;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.world.World;
-import com.builtbroken.mc.testing.junit.world.FakeWorld;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -14,11 +14,11 @@ import org.junit.runner.RunWith;
  * Created by robert on 11/13/2014.
  */
 @RunWith(VoltzTestRunner.class)
-public class FakeWorldTest extends AbstractTest
+public class FakeWorldWithChunksTest extends AbstractTest
 {
     World world = null;
 
-    public FakeWorldTest()
+    public FakeWorldWithChunksTest()
     {
 
     }
@@ -26,7 +26,7 @@ public class FakeWorldTest extends AbstractTest
     @Override
     public void setUpForEntireClass()
     {
-        world = new FakeWorld();
+        world = FakeWorldWithChunks.newWorld("FakeWorldWithChunksTest");
     }
 
     @Test
@@ -41,6 +41,12 @@ public class FakeWorldTest extends AbstractTest
     public void testCreation()
     {
         assertNotNull("Failed to create world", world);
+    }
+
+    @Test
+    public void testChunkExists()
+    {
+        assertNotNull("Failed to create world chunk", world.getChunkFromBlockCoords(0, 0));
     }
 
     @Test
@@ -59,11 +65,11 @@ public class FakeWorldTest extends AbstractTest
     @Test
     public void testBlockPlacement()
     {
-        if (Blocks.sand != null)
+        if (Blocks.grass != null)
         {
-            world.setBlock(0, 0, 0, Blocks.sand);
+            world.setBlock(0, 0, 0, Blocks.grass);
             Block block = world.getBlock(0, 0, 0);
-            assertEquals("World.getBlock() failed ", Blocks.sand, block);
+            assertEquals("World.getBlock() failed ", Blocks.grass, block);
         }
         else
         {
