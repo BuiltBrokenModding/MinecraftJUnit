@@ -32,7 +32,8 @@ public class ChunkProviderServer implements IChunkProvider
     @Override
     public Chunk loadChunk(int par1, int par2)
     {
-        Chunk chunk = new Chunk(this.worldObj, par1, par2);
+        Chunk chunk = new FakeChunk(this.worldObj, par1, par2);
+        chunk.isChunkLoaded = true;
         this.loadedChunkHashMap.add(ChunkCoordIntPair.chunkXZ2Int(par1, par2), chunk);
         return (Chunk) this.loadedChunkHashMap.getValueByKey(ChunkCoordIntPair.chunkXZ2Int(par1, par2));
     }

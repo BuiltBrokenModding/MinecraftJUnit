@@ -15,7 +15,7 @@ import net.minecraft.world.storage.WorldInfo;
  * Fake world that creates a single chunk to work out of
  * Created by robert on 11/20/2014.
  */
-public class FakeWorldWithChunks extends World
+public class FakeWorldWithChunks extends AbstractFakeWorld
 {
     protected WorldInfo worldInfo;
     protected WorldSettings settings;
@@ -32,47 +32,6 @@ public class FakeWorldWithChunks extends World
         WorldInfo worldInfo = new WorldInfo(settings, name);
         FakeWorldSaveHandler handler = new FakeWorldSaveHandler(worldInfo);
         return new FakeWorldWithChunks(handler, settings, worldInfo, new FakeWorldProvider());
-    }
-
-    @Override
-    public boolean setBlock(int x, int y, int z, Block block, int meta, int notify)
-    {
-        if (x >= -30000000 && z >= -30000000 && x < 30000000 && z < 30000000)
-        {
-            if (y < 0)
-            {
-                return false;
-            }
-            else if (y >= 256)
-            {
-                return false;
-            }
-            else
-            {
-                Chunk chunk = this.getChunkFromChunkCoords(x >> 4, z >> 4);
-                Block prev_block = null;
-                if ((notify & 1) != 0)
-                {
-                    prev_block = chunk.getBlock(x & 15, y, z & 15);
-                }
-
-                boolean flag = chunk.func_150807_a(x & 15, y, z & 15, block, meta);
-
-                this.theProfiler.startSection("checkLight");
-                this.func_147451_t(x, y, z);
-                this.theProfiler.endSection();
-
-                if (flag)
-                {
-                    this.markAndNotifyBlock(x, y, z, chunk, prev_block, block, notify);
-                }
-                return flag;
-            }
-        }
-        else
-        {
-            return false;
-        }
     }
 
     @Override

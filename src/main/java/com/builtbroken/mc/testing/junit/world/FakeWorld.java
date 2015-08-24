@@ -19,7 +19,7 @@ import java.util.List;
  * Fake world that creates a single chunk to work out of
  * Created by robert on 11/20/2014.
  */
-public class FakeWorld extends World
+public class FakeWorld extends AbstractFakeWorld
 {
     public static boolean blocksInit = false;
     public List<TileEntity> tiles = new ArrayList<TileEntity>();

@@ -4,6 +4,7 @@ import com.builtbroken.mc.testing.junit.AbstractTest;
 import com.builtbroken.mc.testing.junit.VoltzTestRunner;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.world.World;
 import com.builtbroken.mc.testing.junit.world.FakeWorld;
@@ -50,7 +51,8 @@ public class FakeWorldTest extends AbstractTest
         {
             world.setBlock(0, 0, 0, null);
             fail("World didn't catch null block");
-        } catch (NullPointerException e)
+        }
+        catch (NullPointerException e)
         {
             //This should be thrown :)
         }
@@ -64,8 +66,7 @@ public class FakeWorldTest extends AbstractTest
             world.setBlock(0, 0, 0, Blocks.sand);
             Block block = world.getBlock(0, 0, 0);
             assertEquals("World.getBlock() failed ", Blocks.sand, block);
-        }
-        else
+        } else
         {
             fail("Blocks.sand is null");
         }
@@ -83,10 +84,33 @@ public class FakeWorldTest extends AbstractTest
             {
                 fail("world.getTileEntity() returned the wrong tile\n" + world.getTileEntity(0, 0, 0) + "  should equal TileEntityChest");
             }
-        }
-        else
+        } else
         {
             fail("Blocks.chest is null");
         }
+    }
+
+    @Test
+    public void testBlockRemoval()
+    {
+        world.setBlock(0, 0, 0, Blocks.grass);
+        assertEquals("World.getBlock() failed ", Blocks.grass, world.getBlock(0, 0, 0));
+        world.setBlockToAir(0, 0, 0);
+        assertEquals("World.getBlock() failed ", Blocks.air, world.getBlock(0, 0, 0));
+    }
+
+    @Test
+    public void testTileRemoval()
+    {
+        world.setBlock(0, 0, 0, Blocks.chest);
+        assertEquals("World.getBlock() failed ", Blocks.chest, world.getBlock(0, 0, 0));
+        assertTrue("World.getTile() should have returned a chest tile ", world.getTileEntity(0, 0, 0) instanceof TileEntityChest);
+        world.setBlockToAir(0, 0, 0);
+        world.updateEntities();
+        assertEquals("World.getBlock() failed ", Blocks.air, world.getBlock(0, 0, 0));
+
+        TileEntity tile = world.getTileEntity(0, 0, 0);
+        //System.out.println("Tile: " + tile + " Invalid: " + tile.isInvalid());
+        assertTrue("World.getTile() should be null ", tile == null);
     }
 }
