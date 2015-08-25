@@ -119,7 +119,7 @@ jar {
 repositories {
     maven{
         name="bbm"
-        url="http://ci.builtbroken.com/maven/"}
+        url="http://ci.dmodoomsirius.me/maven/"}
 }
 
 dependencies 
