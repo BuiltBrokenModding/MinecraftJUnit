@@ -116,12 +116,6 @@ jar {
 }
 
 
-repositories {
-    maven{
-        name="bbm"
-        url="http://ci.builtbroken.com/maven/"}
-}
-
 dependencies 
 {
     compile 'junit:junit:4.11'
