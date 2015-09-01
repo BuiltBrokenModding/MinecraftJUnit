@@ -1,6 +1,5 @@
 package com.builtbroken.mc.testing.junit.world;
 
-import com.builtbroken.mc.testing.junit.ModRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
@@ -20,10 +19,11 @@ import java.util.List;
  * Fake world that creates a single chunk to work out of
  * Created by robert on 11/20/2014.
  */
-public class FakeWorld extends World
+public class FakeWorld extends AbstractFakeWorld
 {
     public static boolean blocksInit = false;
     public List<TileEntity> tiles = new ArrayList<TileEntity>();
+    public List<TileEntity> remove_tiles = new ArrayList<TileEntity>();
 
     Data[][][] mapData;
     int size;
@@ -38,18 +38,30 @@ public class FakeWorld extends World
         super(null, "FakeWorld", new FakeWorldProvider(), new WorldSettings(new WorldInfo(new NBTTagCompound())), new Profiler());
         this.size = size;
         mapData = new Data[size + size + 1][256][size + size + 1];
-        ModRegistry.init();
     }
 
     @Override
     public void updateEntities()
     {
+        if (remove_tiles.size() > 0)
+        {
+            Iterator<TileEntity> tile_iterator = remove_tiles.iterator();
+            while (tile_iterator.hasNext())
+            {
+                TileEntity tile = tile_iterator.next();
+                tile.invalidate();
+                tiles.remove(tile);
+                tile_iterator.remove();
+            }
+
+        }
         Iterator<TileEntity> tile_iterator = tiles.iterator();
         while (tile_iterator.hasNext())
         {
             TileEntity tile = tile_iterator.next();
             if (tile.isInvalid())
             {
+                System.out.println("removing invalid tile " + tile_iterator);
                 tile_iterator.remove();
             }
             else
@@ -97,7 +109,10 @@ public class FakeWorld extends World
                 if (newTile != get(x, y, z).tile)
                 {
                     if (get(x, y, z).tile != null)
+                    {
                         get(x, y, z).tile.invalidate();
+                        remove_tiles.add(get(x, y, z).tile);
+                    }
                     get(x, y, z).tile = newTile;
                     if (newTile != null)
                     {
