@@ -23,14 +23,13 @@ plugins {
   id 'com.github.kt3k.coveralls' version '2.0.1'
 }
 
-apply from: 'https://raw.githubusercontent.com/BuiltBrokenModding/BuiltBrokenScripts/buildScripts/scripts/forge/builtbroken.gradle'
-apply from: 'https://raw.githubusercontent.com/BuiltBrokenModding/BuiltBrokenScripts/buildScripts/index-both.gradle'
-apply from: 'https://raw.githubusercontent.com/BuiltBrokenModding/BuiltBrokenScripts/buildScripts/scripts/forge/newCurse.gradle'
-apply from: 'https://raw.githubusercontent.com/BuiltBrokenModding/BuiltBrokenScripts/buildScripts/scripts/forge/maven.gradle'
+apply from: 'https://raw.githubusercontent.com/BuiltBrokenModding/BuiltBrokenScripts/buildScripts/index.gradle'
 apply plugin: 'forge'
 apply plugin: 'curseforge'
 apply plugin: 'com.github.kt3k.coveralls'
 apply plugin: 'jacoco'
+apply from: 'https://raw.githubusercontent.com/BuiltBrokenModding/BuiltBrokenScripts/buildScripts/scripts/both/repos.gradle'
+
 
 ext.buildProps = file "build.properties"
 
@@ -115,11 +114,10 @@ jar {
     )
 }
 
-
 dependencies 
 {
     compile 'junit:junit:4.11'
-    compile "com.builtbroken.codinglib:CodingLib:0.0.1b4"
+    compile "com.builtbroken.codinglib:CodingLib:0.0.+:deobf"
     testRuntime 'org.slf4j:slf4j-simple:1.7.10'
 }
 def getDate() {
