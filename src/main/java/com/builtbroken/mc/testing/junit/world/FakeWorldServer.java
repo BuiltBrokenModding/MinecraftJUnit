@@ -14,17 +14,18 @@ import java.io.File;
  * Version of WorldServer for unit testing
  * Created by Dark on 9/3/2015.
  */
-public class FakeWorldWithChunksServer extends WorldServer
+public class FakeWorldServer extends WorldServer
 {
+    static File baseFolder = new File(new File("."), "out/test/FakeWorldWithServer/");
     File rootFolder;
 
-    public FakeWorldWithChunksServer(String name, FakeWorldSaveHandler handler, int dimID, WorldSettings settings)
+    public FakeWorldServer(String name, FakeWorldSaveHandler handler, int dimID, WorldSettings settings)
     {
-        super(new FakeDedicatedServer(new File(new File("."), "FakeWorldWithServer/" + name)), handler, name, dimID, settings, new Profiler());
-        rootFolder = new File(new File("."), "FakeWorldWithServer/" + name);
+        super(new FakeDedicatedServer(new File(baseFolder, name)), handler, name, dimID, settings, new Profiler());
+        rootFolder = new File(baseFolder, name);
     }
 
-    public static FakeWorldWithChunksServer newWorld(String name)
+    public static FakeWorldServer newWorld(String name)
     {
         WorldSettings settings = new WorldSettings(0, WorldSettings.GameType.SURVIVAL, false, false, WorldType.FLAT);
         WorldInfo worldInfo = new WorldInfo(settings, name);
@@ -34,7 +35,7 @@ public class FakeWorldWithChunksServer extends WorldServer
             DimensionManager.registerProviderType(100, FakeWorldProvider.class, false);
             DimensionManager.registerDimension(100, 100);
         }
-        return new FakeWorldWithChunksServer(name, handler, 100, settings);
+        return new FakeWorldServer(name, handler, 100, settings);
     }
 
     @Override

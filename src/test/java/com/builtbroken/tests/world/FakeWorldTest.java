@@ -2,16 +2,16 @@ package com.builtbroken.tests.world;
 
 import com.builtbroken.mc.testing.junit.AbstractTest;
 import com.builtbroken.mc.testing.junit.VoltzTestRunner;
+import com.builtbroken.mc.testing.junit.world.FakeWorld;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.world.World;
-import com.builtbroken.mc.testing.junit.world.FakeWorld;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-/**
+/** JUnit test for {@link FakeWorld}
  * Created by robert on 11/13/2014.
  */
 @RunWith(VoltzTestRunner.class)
@@ -27,7 +27,7 @@ public class FakeWorldTest extends AbstractTest
     @Override
     public void setUpForEntireClass()
     {
-        world = new FakeWorld();
+        world = FakeWorld.newWorld("FakeWorldTest");
     }
 
     @Test
