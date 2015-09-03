@@ -1,6 +1,5 @@
-package com.builtbroken.mc.testing.junit.world;
+package com.builtbroken.mc.testing.junit.server;
 
-import cpw.mods.fml.common.FMLCommonHandler;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.ServerCommand;
 import net.minecraft.crash.CrashReport;
@@ -36,33 +35,98 @@ public class FakeDedicatedServer extends net.minecraft.server.dedicated.Dedicate
                 threadArray[i].stop();
             }
         }
-    }
 
-    /**
-     * Initialises the server and starts it.
-     */
-    protected boolean startServer() throws IOException
-    {
         logger.info("Starting fake server, Nothing will load or tick");
 
         this.setHostname("127.0.0.1");
         this.setServerPort(25565);
-
-
-        if (this.func_152368_aE())
-        {
-            this.func_152358_ax().func_152658_c();
-        }
-        FMLCommonHandler.instance().onServerStarted();
         this.func_152361_a(new DedicatedPlayerList(this));
-
         this.func_147136_ar();
         this.isCommandBlockEnabled();
         this.getOpPermissionLevel();
         this.isSnooperEnabled();
         this.setBuildLimit(256);
+
+    }
+
+    @Override
+    protected boolean startServer() throws IOException
+    {
         return true;
     }
+
+    @Override
+    public int getIntProperty(String p_71327_1_, int p_71327_2_)
+    {
+        return p_71327_2_;
+    }
+
+    @Override
+    public String getStringProperty(String p_71330_1_, String p_71330_2_)
+    {
+        return p_71330_2_;
+    }
+
+    @Override
+    public boolean getBooleanProperty(String p_71332_1_, boolean p_71332_2_)
+    {
+        return p_71332_2_;
+    }
+
+    @Override
+    public void setProperty(String p_71328_1_, Object p_71328_2_)
+    {
+
+    }
+
+    @Override
+    public void saveProperties()
+    {
+
+    }
+
+
+    public int getOpPermissionLevel()
+    {
+        return 4;
+    }
+
+    @Override
+    public void func_143006_e(int p_143006_1_)
+    {
+
+    }
+
+    @Override
+    public boolean func_152363_m()
+    {
+        return false;
+    }
+
+    @Override
+    public boolean func_147136_ar()
+    {
+        return false;
+    }
+
+    @Override
+    protected boolean func_152368_aE() throws IOException
+    {
+        return false;
+    }
+
+    @Override
+    public boolean isCommandBlockEnabled()
+    {
+        return false;
+    }
+
+    @Override
+    public int getSpawnProtectionSize()
+    {
+        return 0;
+    }
+
 
     /**
      * Adds the server info, including from theWorldServer, to the crash report.

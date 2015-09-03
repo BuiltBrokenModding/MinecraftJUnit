@@ -1,6 +1,6 @@
 package com.builtbroken.mc.testing.junit;
 
-import com.builtbroken.mc.testing.junit.world.FakeDedicatedServer;
+import com.builtbroken.mc.testing.junit.server.FakeDedicatedServer;
 import com.google.common.io.Files;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;

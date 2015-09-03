@@ -1,5 +1,6 @@
 package com.builtbroken.mc.testing.junit.world;
 
+import com.builtbroken.mc.testing.junit.server.FakeDedicatedServer;
 import net.minecraft.profiler.Profiler;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.WorldSettings;
@@ -15,9 +16,12 @@ import java.io.File;
  */
 public class FakeWorldWithChunksServer extends WorldServer
 {
+    File rootFolder;
+
     public FakeWorldWithChunksServer(String name, FakeWorldSaveHandler handler, int dimID, WorldSettings settings)
     {
         super(new FakeDedicatedServer(new File(new File("."), "FakeWorldWithServer/" + name)), handler, name, dimID, settings, new Profiler());
+        rootFolder = new File(new File("."), "FakeWorldWithServer/" + name);
     }
 
     public static FakeWorldWithChunksServer newWorld(String name)
@@ -25,11 +29,17 @@ public class FakeWorldWithChunksServer extends WorldServer
         WorldSettings settings = new WorldSettings(0, WorldSettings.GameType.SURVIVAL, false, false, WorldType.FLAT);
         WorldInfo worldInfo = new WorldInfo(settings, name);
         FakeWorldSaveHandler handler = new FakeWorldSaveHandler(worldInfo);
-        if (DimensionManager.getProvider(100) == null)
+        if (!DimensionManager.isDimensionRegistered(100))
         {
             DimensionManager.registerProviderType(100, FakeWorldProvider.class, false);
             DimensionManager.registerDimension(100, 100);
         }
         return new FakeWorldWithChunksServer(name, handler, 100, settings);
+    }
+
+    @Override
+    public File getChunkSaveLocation()
+    {
+        return new File(rootFolder, "save");
     }
 }
