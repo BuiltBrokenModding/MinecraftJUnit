@@ -1,5 +1,6 @@
 package com.builtbroken.mc.testing.junit;
 
+import com.builtbroken.mc.testing.junit.world.FakeDedicatedServer;
 import com.google.common.io.Files;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
@@ -32,7 +33,8 @@ import java.util.Map;
  */
 public class VoltzTestRunner extends Runner
 {
-    protected static LaunchClassLoader loader;
+    public static LaunchClassLoader loader;
+    public static FakeDedicatedServer server;
 
     protected Class<? extends AbstractTest> clazz;
     protected Object test;
