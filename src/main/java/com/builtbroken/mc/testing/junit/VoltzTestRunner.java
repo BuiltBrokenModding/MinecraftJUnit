@@ -175,7 +175,7 @@ public class VoltzTestRunner extends Runner
                     {
                         cause = e.getCause();
                     }
-                    cause = new RuntimeException("Test " + name + " has failed", cause);
+                    System.out.println("\n\nTest " + name + " has failed");
                     Failure failure = new Failure(entry.getValue(), cause);
                     notifier.fireTestFailure(failure);
                 }

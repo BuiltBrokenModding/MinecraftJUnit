@@ -3,6 +3,7 @@ package com.builtbroken.mc.testing.junit.testers;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.client.C15PacketClientSettings;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.ItemInWorldManager;
@@ -55,4 +56,12 @@ public class TestPlayer extends EntityPlayerMP
 
     @Override
     public void func_147100_a(C15PacketClientSettings pkt) { return; }
+
+    public void reset()
+    {
+        this.setLocationAndAngles(0, 0, 0, 0, 0);
+        this.inventory.mainInventory = new ItemStack[36];
+        this.inventory.armorInventory = new ItemStack[4];
+        this.inventory.currentItem = 0;
+    }
 }
