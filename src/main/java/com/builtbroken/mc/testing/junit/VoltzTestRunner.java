@@ -2,6 +2,7 @@ package com.builtbroken.mc.testing.junit;
 
 import com.builtbroken.mc.testing.junit.server.FakeDedicatedServer;
 import com.google.common.io.Files;
+import cpw.mods.fml.common.ModContainer;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.launchwrapper.Launch;
@@ -63,16 +64,22 @@ public class VoltzTestRunner extends Runner
                 URL[] urLs = ((URLClassLoader) Launch.class.getClassLoader()).getURLs();
                 loader = new LaunchClassLoader(urLs);
 
-                Class<?> itemz = loader.loadClass("cpw.mods.fml.relauncher.FMLRelaunchLog");
-                Field mz = itemz.getDeclaredField("side");
-                mz.setAccessible(true);
+                //Set side to client
+                Class<?> fmlRelaunchLogClass = loader.loadClass("cpw.mods.fml.relauncher.FMLRelaunchLog");
+                Field sideField = fmlRelaunchLogClass.getDeclaredField("side");
+                sideField.setAccessible(true);
+                sideField.set(fmlRelaunchLogClass, Enum.valueOf((Class<Enum>) sideField.getType(), "CLIENT"));
 
-                mz.set(itemz, Enum.valueOf((Class<Enum>) mz.getType(), "CLIENT"));
+                //Inject data into FML Loader
+                Class<?> fmlLoader = loader.loadClass("cpw.mods.fml.common.Loader");
+                Method injectDataMethod = fmlLoader.getMethod("injectData", Object[].class);
+                injectDataMethod.invoke(null, new Object[]{data});
 
-                Class<?> item1 = loader.loadClass("cpw.mods.fml.common.Loader");
-                Method m1 = item1.getMethod("injectData", Object[].class);
-                m1.invoke(null, new Object[]{data});
+                Field namedModsField = fmlLoader.getDeclaredField("namedMods");
+                namedModsField.setAccessible(true);
+                namedModsField.set(fmlLoader.getMethod("instance").invoke(null), new HashMap<String, ModContainer>());
 
+                //Load blocks and items
                 try
                 {
                     Class<?> bootstrap = loader.loadClass("net.minecraft.init.Bootstrap");
