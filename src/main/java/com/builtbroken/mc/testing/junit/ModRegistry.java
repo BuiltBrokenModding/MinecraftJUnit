@@ -20,14 +20,13 @@ public class ModRegistry
     private static List<IFuelHandler> fuelHandlers = Lists.newArrayList();
     private static boolean blocksInit = false;
     private static int nextID = 500;
-
     /**
      * Register a block with the specified mod specific name
      *
      * @param block The block to register
      * @param name  The mod-unique name to register it as, will get prefixed by your modid.
      */
-    public static Block registerBlock(Block block, String name)
+    public static <B extends Block> B registerBlock(B block, String name)
     {
         return registerBlock(block, ItemBlock.class, name);
     }
@@ -39,7 +38,7 @@ public class ModRegistry
      * @param itemclass The item type to register with it : null registers a block without associated item.
      * @param name      The mod-unique name to register it as, will get prefixed by your modid.
      */
-    public static Block registerBlock(Block block, Class<? extends ItemBlock> itemclass, String name)
+    public static <B extends Block> B registerBlock(B block, Class<? extends ItemBlock> itemclass, String name)
     {
         if (!Block.blockRegistry.containsKey(name))
         {
@@ -71,6 +70,6 @@ public class ModRegistry
         {
             throw new IllegalArgumentException("Block is already registered to " + name);
         }
-        return Block.getBlockFromName(name);
+        return (B) Block.getBlockFromName(name);
     }
 }
