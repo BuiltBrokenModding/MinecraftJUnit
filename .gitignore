@@ -27,3 +27,7 @@ VoltzEngine.txt
 APP-AuthTest/
 CompiledWith.txt
 MinecraftJUnit.txt
+banned-ips.json
+banned-players.json
+ops.json
+whitelist.json

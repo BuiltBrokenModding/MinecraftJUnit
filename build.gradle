@@ -29,52 +29,12 @@ apply plugin: 'curseforge'
 apply plugin: 'com.github.kt3k.coveralls'
 apply plugin: 'jacoco'
 
-
-ext.buildProps = file "build.properties"
-
 println "Current Minecraft version = " + minecraft.apiVersion
 
 def currentJvm = org.gradle.internal.jvm.Jvm.current()
 println "Current Java version = " + currentJvm
 
-buildProps.withReader {
-    def prop = new Properties()
-    prop.load(it)
-    ext.config = new ConfigSlurper().parse prop
-}
-
-if (project.getProperty("bambooshortPlanName") == "BBM-Dev") {
-    group = "dev.builtbroken.minecraftjunit"
-    archivesBaseName = "MinecraftJUnit"
-} else {
-    group = "com.builtbroken.minecraftjunit"
-    archivesBaseName = "MinecraftJUnit"
-}
-
 println archivesBaseName 
-
-version = "${project.minecraft.version}-${config.version.mod.major}.${config.version.mod.minor}.${config.version.mod.revis}b"
-
-// This is used to set the local version
-if (project.hasProperty("bambooBuildNumber"))
-    version += project.bambooBuildNumber
-else
-    version += getDate()
-
-println "version = "+ version
-
-minecraft {
-	replace "@MAJOR@", config.version.mod.major
-	replace "@MINOR@", config.version.mod.minor
-	replace "@REVIS@", config.version.mod.revis
-	
-	if (project.hasProperty("bambooBuildNumber")) {
-		replace "@BUILD@", project.bambooBuildNumber
-	}
-	else {
-		replace "@BUILD@", getDate()
-	}
-}
 
 processResources {
 	from(sourceSets.main.resources.srcDirs) {
@@ -92,8 +52,6 @@ processResources {
 		exclude '**/*.properties'
 	}
 }
-
-archivesBaseName = "MinecraftJUnit"
 
 import org.ajoberstar.grgit.Grgit
 
