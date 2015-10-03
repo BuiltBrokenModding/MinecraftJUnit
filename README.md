@@ -4,7 +4,7 @@ Lib designed to support JUnit testing in a minecraft forge workspace
 ## Add to dev workspace
 
 
-```
+```groovy
 repositories {
     jcenter()
     maven {
