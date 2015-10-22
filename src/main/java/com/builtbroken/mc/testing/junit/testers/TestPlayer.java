@@ -21,7 +21,10 @@ public class TestPlayer extends EntityPlayerMP
     public boolean canCommandSenderUseCommand(int i, String s) { return false; }
 
     @Override
-    public void addChatComponentMessage(IChatComponent chatmessagecomponent) {}
+    public void addChatComponentMessage(IChatComponent chatmessagecomponent)
+    {
+        System.out.println("[ToPlayer]: " + chatmessagecomponent.getFormattedText());
+    }
 
     @Override
     public void addStat(StatBase par1StatBase, int par2) {}
