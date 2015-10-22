@@ -19,6 +19,10 @@ public class TestPlayer extends EntityPlayerMP
     public boolean outputChat = false;
     /** Toggle to throw errors when chat messages are received, useful for checking if chat messages are outputted correctly... or at all. */
     public boolean throwErrorsWhenReceivingChat = false;
+    /** Toggle to throw errors when stats are received, useful for checking if stats are received correctly... or at all. */
+    public boolean throwErrorsWhenReceivingStats = false;
+    /** Toggle to throw errors when guis are opened, useful for checking if guis are opened correctly... or at all. */
+    public boolean throwErrorsWhenOpeningGUI = false;
 
     /**
      * Only constructor for this class
@@ -45,10 +49,22 @@ public class TestPlayer extends EntityPlayerMP
     }
 
     @Override
-    public void addStat(StatBase par1StatBase, int par2) {}
+    public void addStat(StatBase par1StatBase, int par2)
+    {
+        if (throwErrorsWhenReceivingStats)
+        {
+            throw new RuntimeException(par1StatBase + "  " + par2);
+        }
+    }
 
     @Override
-    public void openGui(Object mod, int modGuiId, World world, int x, int y, int z) {}
+    public void openGui(Object mod, int modGuiId, World world, int x, int y, int z)
+    {
+        if (throwErrorsWhenOpeningGUI)
+        {
+            throw new RuntimeException("mod:" + mod + " id:" + modGuiId + " dim:" + world.provider.dimensionId + " " + x + "x " + y + "y " + z + "z");
+        }
+    }
 
     /**
      * Clears the data assigned to the test player.
