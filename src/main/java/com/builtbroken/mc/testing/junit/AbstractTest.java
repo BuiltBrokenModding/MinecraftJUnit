@@ -97,7 +97,7 @@ public class AbstractTest extends TestCase
             name = name.substring(0, 1).toUpperCase() + name.substring(1, name.length());
 
             //Print java doc
-            builder.append("/** Tests {@link " + clazz + "#" + method.getName() + "(");
+            builder.append("/** Tests {@link " + clazz.getSimpleName() + "#" + method.getName() + "(");
 
             //Print method params for java doc
             for (int i = 0; i < method.getParameterTypes().length; i++)
