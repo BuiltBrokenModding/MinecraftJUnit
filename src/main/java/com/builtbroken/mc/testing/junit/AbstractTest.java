@@ -9,7 +9,7 @@ import java.lang.reflect.Method;
  * run the tests as these methods will be called.
  * Created by robert on 1/6/2015.
  */
-public class AbstractTest extends TestCase
+public abstract class AbstractTest extends TestCase
 {
     /**
      * Builds anything that all tests for this class need
