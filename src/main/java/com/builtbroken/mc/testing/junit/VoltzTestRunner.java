@@ -84,7 +84,8 @@ public class VoltzTestRunner extends Runner
                 {
                     Class<?> bootstrap = loader.loadClass("net.minecraft.init.Bootstrap");
                     bootstrap.getMethod("func_151354_b").invoke(null);
-                } catch (Exception e)
+                }
+                catch (Exception e)
                 {
                     e.printStackTrace();
                     if (e instanceof NullPointerException)
@@ -98,7 +99,8 @@ public class VoltzTestRunner extends Runner
                             try
                             {
                                 System.out.println(field.getName() + ": " + field.get(null));
-                            } catch (IllegalAccessException e1)
+                            }
+                            catch (IllegalAccessException e1)
                             {
                                 e1.printStackTrace();
                             }
@@ -118,30 +120,39 @@ public class VoltzTestRunner extends Runner
 
             for (Method method : test_class.getMethods())
             {
-                String name = method.getName();
-                Annotation an = method.getAnnotation(Test.class);
-                if (an != null || name.startsWith("test"))
+                if(!testMethods.containsKey(method))
                 {
-                    testMethods.put(method, Description.createTestDescription(test_class, method.getName()));
+                    String name = method.getName();
+                    Annotation an = method.getAnnotation(Test.class);
+                    if (an != null || name.startsWith("test"))
+                    {
+                        testMethods.put(method, Description.createTestDescription(test_class, method.getName()));
+                    }
                 }
             }
 
-        } catch (NoSuchMethodException e)
+        }
+        catch (NoSuchMethodException e)
         {
             e.printStackTrace();
-        } catch (IllegalAccessException e)
+        }
+        catch (IllegalAccessException e)
         {
             e.printStackTrace();
-        } catch (NoSuchFieldException e)
+        }
+        catch (NoSuchFieldException e)
         {
             e.printStackTrace();
-        } catch (InstantiationException e)
+        }
+        catch (InstantiationException e)
         {
             e.printStackTrace();
-        } catch (InvocationTargetException e)
+        }
+        catch (InvocationTargetException e)
         {
             e.printStackTrace();
-        } catch (ClassNotFoundException e)
+        }
+        catch (ClassNotFoundException e)
         {
             e.printStackTrace();
         }
@@ -175,7 +186,8 @@ public class VoltzTestRunner extends Runner
                     setUp.invoke(test, name);
                     method.invoke(test);
                     tearDown.invoke(test, name);
-                } catch (Exception e)
+                }
+                catch (Exception e)
                 {
                     Throwable cause = e;
                     if (e instanceof InvocationTargetException)
@@ -192,10 +204,12 @@ public class VoltzTestRunner extends Runner
             //Clean up data for the entire test class
             tearDownClass.invoke(test);
 
-        } catch (InvocationTargetException e)
+        }
+        catch (InvocationTargetException e)
         {
             e.printStackTrace();
-        } catch (IllegalAccessException e)
+        }
+        catch (IllegalAccessException e)
         {
             e.printStackTrace();
         }
@@ -208,12 +222,14 @@ public class VoltzTestRunner extends Runner
         try
         {
             method = clazz.getMethod(name, args);
-        } catch (NoSuchMethodException e)
+        }
+        catch (NoSuchMethodException e)
         {
             try
             {
                 method = clazz.getDeclaredMethod(name, args);
-            } catch (NoSuchMethodException e2)
+            }
+            catch (NoSuchMethodException e2)
             {
 
             }
