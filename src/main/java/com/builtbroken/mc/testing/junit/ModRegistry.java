@@ -1,7 +1,7 @@
 package com.builtbroken.mc.testing.junit;
 
 import com.google.common.collect.Lists;
-import cpw.mods.fml.common.IFuelHandler;
+import net.minecraftforge.fml.common.IFuelHandler;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;

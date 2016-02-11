@@ -2,7 +2,7 @@ package com.builtbroken.mc.testing.junit;
 
 import com.builtbroken.mc.testing.junit.server.FakeDedicatedServer;
 import com.google.common.io.Files;
-import cpw.mods.fml.common.ModContainer;
+import net.minecraftforge.fml.common.ModContainer;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.launchwrapper.Launch;
@@ -65,13 +65,13 @@ public class VoltzTestRunner extends Runner
                 loader = new LaunchClassLoader(urLs);
 
                 //Set side to client
-                Class<?> fmlRelaunchLogClass = loader.loadClass("cpw.mods.fml.relauncher.FMLRelaunchLog");
+                Class<?> fmlRelaunchLogClass = loader.loadClass("net.minecraftforge.fml.relauncher.FMLRelaunchLog");
                 Field sideField = fmlRelaunchLogClass.getDeclaredField("side");
                 sideField.setAccessible(true);
                 sideField.set(fmlRelaunchLogClass, Enum.valueOf((Class<Enum>) sideField.getType(), "CLIENT"));
 
                 //Inject data into FML Loader
-                Class<?> fmlLoader = loader.loadClass("cpw.mods.fml.common.Loader");
+                Class<?> fmlLoader = loader.loadClass("net.minecraftforge.fml.common.Loader");
                 Method injectDataMethod = fmlLoader.getMethod("injectData", Object[].class);
                 injectDataMethod.invoke(null, new Object[]{data});
 
