@@ -74,9 +74,10 @@ jar {
 dependencies 
 {
     compile 'junit:junit:4.11'
-    compile "com.builtbroken.codinglib:CodingLib:0.0.+:deobf"
+    compile "com.builtbroken.codinglib:CodingLib:0.0.3b26:deobf"
     testRuntime 'org.slf4j:slf4j-simple:1.7.10'
 }
+
 def getDate() {
     def date = new Date()
     def formattedDate = date.format('yyyyMMddHHmmss')
