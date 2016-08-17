@@ -14,13 +14,8 @@ import net.minecraft.world.storage.WorldInfo;
  */
 public class FakeWorld extends AbstractFakeWorld
 {
-    protected WorldInfo worldInfo;
-    protected WorldSettings settings;
-
-    public FakeWorld(FakeWorldSaveHandler handler, WorldSettings settings, WorldInfo info, WorldProvider provider)
-    {
-        super(handler, "FakeWorld", settings, provider, new Profiler());
-        this.worldInfo = info;
+    public FakeWorld(FakeWorldSaveHandler saveHandler, WorldSettings settings, WorldProvider worldProvider, boolean client) {
+        super(saveHandler, new WorldInfo(settings, "FakeWorld"), worldProvider, new Profiler(), client);
     }
 
     public static FakeWorld newWorld(String name)
@@ -28,7 +23,7 @@ public class FakeWorld extends AbstractFakeWorld
         WorldSettings settings = new WorldSettings(0, WorldSettings.GameType.SURVIVAL, false, false, WorldType.FLAT);
         WorldInfo worldInfo = new WorldInfo(settings, name);
         FakeWorldSaveHandler handler = new FakeWorldSaveHandler(worldInfo);
-        return new FakeWorld(handler, settings, worldInfo, new FakeWorldProvider());
+        return new FakeWorld(handler, settings, new FakeWorldProvider(), true);
     }
 
     @Override
@@ -38,7 +33,7 @@ public class FakeWorld extends AbstractFakeWorld
     }
 
     @Override
-    protected int func_152379_p()
+    protected int getRenderDistanceChunks()
     {
         return 0;
     }

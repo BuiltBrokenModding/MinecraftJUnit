@@ -40,13 +40,12 @@ public class FakeDedicatedServer extends net.minecraft.server.dedicated.Dedicate
 
         this.setHostname("127.0.0.1");
         this.setServerPort(25565);
-        this.func_152361_a(new DedicatedPlayerList(this));
-        this.func_147136_ar();
+        this.setConfigManager(new DedicatedPlayerList(this));
+        this.isAnnouncingPlayerAchievements();
         this.isCommandBlockEnabled();
         this.getOpPermissionLevel();
         this.isSnooperEnabled();
         this.setBuildLimit(256);
-
     }
 
     @Override
@@ -92,25 +91,23 @@ public class FakeDedicatedServer extends net.minecraft.server.dedicated.Dedicate
     }
 
     @Override
-    public void func_143006_e(int p_143006_1_)
-    {
+    public void setPlayerIdleTimeout(int idleTimeout) {
 
     }
 
     @Override
-    public boolean func_152363_m()
-    {
-        return false;
-    }
-
-    @Override
-    public boolean func_147136_ar()
+    public boolean canStructuresSpawn()
     {
         return false;
     }
 
     @Override
-    protected boolean func_152368_aE() throws IOException
+    public boolean isAnnouncingPlayerAchievements() {
+        return false;
+    }
+
+    @Override
+    protected boolean convertFiles() throws IOException
     {
         return false;
     }

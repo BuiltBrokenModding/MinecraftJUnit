@@ -56,8 +56,7 @@ public class FakeWorldSaveHandler implements ISaveHandler
     }
 
     @Override
-    public IPlayerFileData getSaveHandler()
-    {
+    public IPlayerFileData getPlayerNBTManager() {
         return null;
     }
 

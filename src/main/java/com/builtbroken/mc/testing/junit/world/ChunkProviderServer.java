@@ -1,11 +1,12 @@
 package com.builtbroken.mc.testing.junit.world;
 
 import net.minecraft.entity.EnumCreatureType;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.IProgressUpdate;
 import net.minecraft.util.LongHashMap;
 import net.minecraft.world.ChunkCoordIntPair;
-import net.minecraft.world.ChunkPosition;
 import net.minecraft.world.World;
+import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.IChunkProvider;
 
@@ -30,19 +31,22 @@ public class ChunkProviderServer implements IChunkProvider
     }
 
     @Override
-    public Chunk loadChunk(int par1, int par2)
+    public Chunk provideChunk(BlockPos pos)
     {
+        int par1 = pos.getX();
+        int par2 = pos.getZ();
         Chunk chunk = new FakeChunk(this.worldObj, par1, par2);
-        chunk.isChunkLoaded = true;
+        chunk.setChunkLoaded(true);
         this.loadedChunkHashMap.add(ChunkCoordIntPair.chunkXZ2Int(par1, par2), chunk);
         return (Chunk) this.loadedChunkHashMap.getValueByKey(ChunkCoordIntPair.chunkXZ2Int(par1, par2));
     }
 
     @Override
-    public Chunk provideChunk(int p_73154_1_, int p_73154_2_)
+    public Chunk provideChunk(int x, int z)
     {
-        Chunk chunk = (Chunk) this.loadedChunkHashMap.getValueByKey(ChunkCoordIntPair.chunkXZ2Int(p_73154_1_, p_73154_2_));
-        return chunk == null ? this.loadChunk(p_73154_1_, p_73154_2_) : chunk;
+        BlockPos pos  = new BlockPos(x, 0, z);
+        Chunk chunk = (Chunk) this.loadedChunkHashMap.getValueByKey(ChunkCoordIntPair.chunkXZ2Int(x, z));
+        return chunk == null ? this.provideChunk(pos) : chunk;
     }
 
     @Override
@@ -50,7 +54,7 @@ public class ChunkProviderServer implements IChunkProvider
     {
         Chunk chunk = this.provideChunk(p_73153_2_, p_73153_3_);
 
-        if (!chunk.isTerrainPopulated)
+        if (!chunk.isTerrainPopulated())
         {
             chunk.func_150809_p();
 
@@ -61,6 +65,12 @@ public class ChunkProviderServer implements IChunkProvider
                 chunk.setChunkModified();
             }
         }
+    }
+
+    @Override
+    public boolean populateChunk(IChunkProvider chunkProvider, Chunk p_177460_2_, int x, int z)
+    {
+        return false;
     }
 
     @Override
@@ -88,15 +98,15 @@ public class ChunkProviderServer implements IChunkProvider
     }
 
     @Override
-    public List getPossibleCreatures(EnumCreatureType p_73155_1_, int p_73155_2_, int p_73155_3_, int p_73155_4_)
+    public List<BiomeGenBase.SpawnListEntry> getPossibleCreatures(EnumCreatureType creatureType, BlockPos pos)
     {
-        return this.currentChunkProvider.getPossibleCreatures(p_73155_1_, p_73155_2_, p_73155_3_, p_73155_4_);
+        return this.currentChunkProvider.getPossibleCreatures(creatureType, pos);
     }
 
     @Override
-    public ChunkPosition func_147416_a(World p_147416_1_, String p_147416_2_, int p_147416_3_, int p_147416_4_, int p_147416_5_)
+    public BlockPos getStrongholdGen(World worldIn, String structureName, BlockPos position)
     {
-        return this.currentChunkProvider.func_147416_a(p_147416_1_, p_147416_2_, p_147416_3_, p_147416_4_, p_147416_5_);
+        return this.currentChunkProvider.getStrongholdGen(worldIn, structureName, position);
     }
 
     @Override
@@ -106,7 +116,7 @@ public class ChunkProviderServer implements IChunkProvider
     }
 
     @Override
-    public void recreateStructures(int p_82695_1_, int p_82695_2_) {}
+    public void recreateStructures(Chunk p_180514_1_, int p_180514_2_, int p_180514_3_) {}
 
     @Override
     public void saveExtraData()

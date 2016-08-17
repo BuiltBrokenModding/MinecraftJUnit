@@ -21,4 +21,9 @@ public class FakeWorldProvider extends WorldProvider
     {
         return "FakeWorld";
     }
+
+    @Override
+    public String getInternalNameSuffix() {
+        return "FakeWorld";
+    }
 }

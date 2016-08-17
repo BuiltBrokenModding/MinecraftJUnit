@@ -20,9 +20,9 @@ public class FakeWorldServer extends WorldServer
     public static File baseFolder = new File(new File("."), "out/test/FakeWorldWithServer/");
     File rootFolder;
 
-    public FakeWorldServer(String name, MinecraftServer server, File file, FakeWorldSaveHandler handler, int dimID, WorldSettings settings)
+    public FakeWorldServer(WorldInfo info, MinecraftServer server, File file, FakeWorldSaveHandler handler, int dimID, WorldSettings settings)
     {
-        super(server, handler, name, dimID, settings, new Profiler());
+        super(server, handler, info, dimID, new Profiler());
         rootFolder = file;
     }
 
@@ -42,14 +42,14 @@ public class FakeWorldServer extends WorldServer
             WorldInfo worldInfo2 = new WorldInfo(settings, name);
             FakeWorldSaveHandler handler2 = new FakeWorldSaveHandler(worldInfo2);
 
-            DimensionManager.setWorld(0, new FakeWorldServer("overworld", server, new File(baseFolder, name), handler2, 0, settings2));
+            DimensionManager.setWorld(0, new FakeWorldServer(new WorldInfo(settings2, "overworld"), server, new File(baseFolder, name), handler2, 0, settings2));
         }
         if (!DimensionManager.isDimensionRegistered(10))
         {
             DimensionManager.registerProviderType(10, FakeWorldProvider.class, false);
             DimensionManager.registerDimension(10, 10);
         }
-        return new FakeWorldServer(name, server, new File(baseFolder, name), handler, 10, settings);
+        return new FakeWorldServer(new WorldInfo(settings, name), server, new File(baseFolder, name), handler, 10, settings);
     }
 
     @Override

@@ -1,8 +1,8 @@
 package com.builtbroken.mc.testing.junit.world;
 
 import net.minecraft.entity.EnumCreatureType;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.IProgressUpdate;
-import net.minecraft.world.ChunkPosition;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.chunk.Chunk;
@@ -23,9 +23,9 @@ public class ChunkProviderEmpty implements IChunkProvider
      * loads or generates the chunk at the chunk location specified
      */
     @Override
-    public Chunk loadChunk(int x, int z)
+    public Chunk provideChunk(BlockPos pos)
     {
-        return this.provideChunk(x, z);
+        return this.provideChunk(pos.getX(), pos.getZ());
     }
 
     /**
@@ -33,8 +33,7 @@ public class ChunkProviderEmpty implements IChunkProvider
      * specified chunk from the map seed and chunk seed
      */
     @Override
-    public Chunk provideChunk(int chunkX, int chunkZ)
-    {
+    public Chunk provideChunk(int chunkX, int chunkZ) {
         Chunk chunk = new Chunk(this.worldObj, chunkX, chunkZ);
 
 
@@ -42,8 +41,7 @@ public class ChunkProviderEmpty implements IChunkProvider
         chunk.generateSkylightMap();
 
         //Set biome ID for chunk
-        for (int l = 0; l < chunk.getBiomeArray().length; ++l)
-        {
+        for (int l = 0; l < chunk.getBiomeArray().length; ++l) {
             chunk.getBiomeArray()[l] = (byte) 1;
         }
 
@@ -67,6 +65,11 @@ public class ChunkProviderEmpty implements IChunkProvider
     public void populate(IChunkProvider p_73153_1_, int p_73153_2_, int p_73153_3_)
     {
 
+    }
+
+    @Override
+    public boolean populateChunk(IChunkProvider chunkProvider, Chunk p_177460_2_, int x, int z) {
+        return true;
     }
 
     /**
@@ -113,19 +116,14 @@ public class ChunkProviderEmpty implements IChunkProvider
         return "sigVoidSource";
     }
 
-    /**
-     * Returns a list of creatures of the specified type that can spawn at the given location.
-     */
     @Override
-    public List getPossibleCreatures(EnumCreatureType p_73155_1_, int p_73155_2_, int p_73155_3_, int p_73155_4_)
-    {
-        BiomeGenBase biomegenbase = this.worldObj.getBiomeGenForCoords(p_73155_2_, p_73155_4_);
-        return biomegenbase.getSpawnableList(p_73155_1_);
+    public List<BiomeGenBase.SpawnListEntry> getPossibleCreatures(EnumCreatureType creatureType, BlockPos pos) {
+        BiomeGenBase biomegenbase = this.worldObj.getBiomeGenForCoords(pos);
+        return biomegenbase.getSpawnableList(creatureType);
     }
 
     @Override
-    public ChunkPosition func_147416_a(World p_147416_1_, String p_147416_2_, int p_147416_3_, int p_147416_4_, int p_147416_5_)
-    {
+    public BlockPos getStrongholdGen(World worldIn, String structureName, BlockPos position) {
         return null;
     }
 
@@ -136,8 +134,7 @@ public class ChunkProviderEmpty implements IChunkProvider
     }
 
     @Override
-    public void recreateStructures(int p_82695_1_, int p_82695_2_)
-    {
+    public void recreateStructures(Chunk p_180514_1_, int p_180514_2_, int p_180514_3_) {
 
     }
 }

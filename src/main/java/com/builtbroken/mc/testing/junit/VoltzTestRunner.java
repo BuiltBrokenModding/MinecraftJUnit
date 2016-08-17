@@ -57,7 +57,7 @@ public class VoltzTestRunner extends Runner
     {
         try
         {
-            Object[] data = new Object[]{"", "", "", "", "1.7.10", "", Files.createTempDir(), Collections.EMPTY_LIST};
+            Object[] data = new Object[]{"", "", "", "", "1.8.9", "", Files.createTempDir(), Collections.EMPTY_LIST};
             // Setup data
             if (loader == null)
             {
@@ -83,7 +83,7 @@ public class VoltzTestRunner extends Runner
                 try
                 {
                     Class<?> bootstrap = loader.loadClass("net.minecraft.init.Bootstrap");
-                    bootstrap.getMethod("func_151354_b").invoke(null);
+                    bootstrap.getMethod("register").invoke(null);
                 }
                 catch (Exception e)
                 {

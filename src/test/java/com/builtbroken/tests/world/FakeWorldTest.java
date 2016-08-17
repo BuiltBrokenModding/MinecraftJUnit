@@ -4,9 +4,13 @@ import com.builtbroken.mc.testing.junit.AbstractTest;
 import com.builtbroken.mc.testing.junit.VoltzTestRunner;
 import com.builtbroken.mc.testing.junit.world.FakeWorld;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockChest;
 import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,7 +37,7 @@ public class FakeWorldTest extends AbstractTest
     @Test
     public void testBlockRegistry()
     {
-        Object block = Block.blockRegistry.getObject("sand");
+        Object block = Block.blockRegistry.getObject(new ResourceLocation("sand"));
         assertNotNull(block);
         assertEquals(Block.getIdFromBlock((Block) block), 12);
     }
@@ -41,7 +45,7 @@ public class FakeWorldTest extends AbstractTest
     @Test
     public void testCreation()
     {
-        assertNotNull("Failed to create world", world);
+        assertNotNull("Failed to create world.", world);
     }
 
     @Test
@@ -49,8 +53,8 @@ public class FakeWorldTest extends AbstractTest
     {
         try
         {
-            world.setBlock(0, 0, 0, null);
-            fail("World didn't catch null block");
+            world.setBlockState(new BlockPos(0, 0, 0), null);
+            fail("World didn't catch null block.");
         }
         catch (NullPointerException e)
         {
@@ -63,12 +67,13 @@ public class FakeWorldTest extends AbstractTest
     {
         if (Blocks.sand != null)
         {
-            world.setBlock(0, 0, 0, Blocks.sand);
-            Block block = world.getBlock(0, 0, 0);
-            assertEquals("World.getBlock() failed ", Blocks.sand, block);
+            BlockPos pos = new BlockPos(0, 0, 0);
+            world.setBlockState(pos, Blocks.sand.getDefaultState());
+            Block block = world.getBlockState(pos).getBlock();
+            assertEquals("World.getBlockState() failed.", Blocks.sand, block);
         } else
         {
-            fail("Blocks.sand is null");
+            fail("Blocks.sand is null.");
         }
     }
 
@@ -77,39 +82,42 @@ public class FakeWorldTest extends AbstractTest
     {
         if (Blocks.chest != null)
         {
-            world.setBlock(0, 0, 0, Blocks.chest);
-            Block block = world.getBlock(0, 0, 0);
-            assertEquals("World.getBlock() failed ", Blocks.chest, block);
-            if (!(world.getTileEntity(0, 0, 0) instanceof TileEntityChest))
+            BlockPos pos = new BlockPos(0, 0, 0);
+            world.setBlockState(pos, Blocks.chest.getDefaultState().withProperty(BlockChest.FACING, EnumFacing.NORTH));
+            Block block = world.getBlockState(pos).getBlock();
+            assertEquals("World.getBlockState() failed ", Blocks.chest, block);
+            if (!(world.getTileEntity(pos) instanceof TileEntityChest))
             {
-                fail("world.getTileEntity() returned the wrong tile\n" + world.getTileEntity(0, 0, 0) + "  should equal TileEntityChest");
+                fail("world.getTileEntity() returned the wrong tile\n" + world.getTileEntity(pos) + "  should equal TileEntityChest.");
             }
         } else
         {
-            fail("Blocks.chest is null");
+            fail("Blocks.chest is null.");
         }
     }
 
     @Test
     public void testBlockRemoval()
     {
-        world.setBlock(0, 0, 0, Blocks.grass);
-        assertEquals("World.getBlock() failed ", Blocks.grass, world.getBlock(0, 0, 0));
-        world.setBlockToAir(0, 0, 0);
-        assertEquals("World.getBlock() failed ", Blocks.air, world.getBlock(0, 0, 0));
+        BlockPos pos = new BlockPos(0, 0, 0);
+        world.setBlockState(pos, Blocks.grass.getDefaultState());
+        assertEquals("World.getBlockState() failed.", Blocks.grass, world.getBlockState(pos));
+        world.setBlockToAir(pos);
+        assertEquals("World.getBlockState() failed.", Blocks.air, world.getBlockState(pos));
     }
 
     @Test
     public void testTileRemoval()
     {
-        world.setBlock(0, 0, 0, Blocks.chest);
-        assertEquals("World.getBlock() failed ", Blocks.chest, world.getBlock(0, 0, 0));
-        assertTrue("World.getTile() should have returned a chest tile ", world.getTileEntity(0, 0, 0) instanceof TileEntityChest);
-        world.setBlockToAir(0, 0, 0);
+        BlockPos pos = new BlockPos(0, 0, 0);
+        world.setBlockState(pos, Blocks.chest.getDefaultState().withProperty(BlockChest.FACING, EnumFacing.NORTH));
+        assertEquals("World.getBlockState() failed, should be a chest.", Blocks.chest, world.getBlockState(pos));
+        assertTrue("World.getTileEntity() should have returned a chest tile.", world.getTileEntity(pos) instanceof TileEntityChest);
+        world.setBlockToAir(pos);
         world.updateEntities();
-        assertEquals("World.getBlock() failed ", Blocks.air, world.getBlock(0, 0, 0));
+        assertEquals("World.getBlock() failed ", Blocks.air, world.getBlockState(pos));
 
-        TileEntity tile = world.getTileEntity(0, 0, 0);
+        TileEntity tile = world.getTileEntity(pos);
         //System.out.println("Tile: " + tile + " Invalid: " + tile.isInvalid());
         assertTrue("World.getTile() should be null ", tile == null);
     }
