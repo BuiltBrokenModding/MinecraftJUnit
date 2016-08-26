@@ -5,6 +5,8 @@ import net.minecraft.command.ServerCommand;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.profiler.PlayerUsageSnooper;
 import net.minecraft.server.dedicated.DedicatedPlayerList;
+import net.minecraft.server.dedicated.PropertyManager;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -27,12 +29,10 @@ public class FakeDedicatedServer extends net.minecraft.server.dedicated.Dedicate
         Thread[] threadArray = threadSet.toArray(new Thread[threadSet.size()]);
 
         //http://stackoverflow.com/questions/15370120/get-thread-by-name
-        for (int i = 0; i < threadArray.length; i++)
-        {
-            if (threadArray[i].getName().equals("Server Infinisleeper"))
-            {
+        for (Thread t : threadArray) {
+            if (t.getName().equals("Server Infinisleeper")) {
                 System.out.println("Killed 'Server Infinisleeper' thread");
-                threadArray[i].stop();
+                t.stop();
             }
         }
 
@@ -46,6 +46,7 @@ public class FakeDedicatedServer extends net.minecraft.server.dedicated.Dedicate
         this.getOpPermissionLevel();
         this.isSnooperEnabled();
         this.setBuildLimit(256);
+        this.settings = new PropertyManager(new File("fakeserver.properties"));
     }
 
     @Override

@@ -24,6 +24,7 @@ public class FakeWorldServer extends WorldServer
     {
         super(server, handler, info, dimID, new Profiler());
         rootFolder = file;
+        initialize(settings);
     }
 
     public static FakeWorldServer newWorld(String name)

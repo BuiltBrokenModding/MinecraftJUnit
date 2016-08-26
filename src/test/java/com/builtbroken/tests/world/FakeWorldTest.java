@@ -1,17 +1,23 @@
 package com.builtbroken.tests.world;
 
-import com.builtbroken.mc.testing.junit.AbstractTest;
-import com.builtbroken.mc.testing.junit.VoltzTestRunner;
-import com.builtbroken.mc.testing.junit.world.FakeWorld;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockChest;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
+import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+
+import com.builtbroken.mc.testing.junit.AbstractTest;
+import com.builtbroken.mc.testing.junit.VoltzTestRunner;
+import com.builtbroken.mc.testing.junit.world.FakeWorld;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -101,9 +107,9 @@ public class FakeWorldTest extends AbstractTest
     {
         BlockPos pos = new BlockPos(0, 0, 0);
         world.setBlockState(pos, Blocks.grass.getDefaultState());
-        assertEquals("World.getBlockState() failed.", Blocks.grass, world.getBlockState(pos));
+        assertEquals("World.getBlockState() failed.", Blocks.grass, world.getBlockState(pos).getBlock());
         world.setBlockToAir(pos);
-        assertEquals("World.getBlockState() failed.", Blocks.air, world.getBlockState(pos));
+        assertEquals("World.getBlockState() failed.", Blocks.air, world.getBlockState(pos).getBlock());
     }
 
     @Test
@@ -111,14 +117,12 @@ public class FakeWorldTest extends AbstractTest
     {
         BlockPos pos = new BlockPos(0, 0, 0);
         world.setBlockState(pos, Blocks.chest.getDefaultState().withProperty(BlockChest.FACING, EnumFacing.NORTH));
-        assertEquals("World.getBlockState() failed, should be a chest.", Blocks.chest, world.getBlockState(pos));
+        assertEquals("World.getBlockState() failed, should be a chest.", Blocks.chest, world.getBlockState(pos).getBlock());
         assertTrue("World.getTileEntity() should have returned a chest tile.", world.getTileEntity(pos) instanceof TileEntityChest);
         world.setBlockToAir(pos);
         world.updateEntities();
-        assertEquals("World.getBlock() failed ", Blocks.air, world.getBlockState(pos));
-
+        assertEquals("World.getBlock() failed ", Blocks.air, world.getBlockState(pos).getBlock());
         TileEntity tile = world.getTileEntity(pos);
-        //System.out.println("Tile: " + tile + " Invalid: " + tile.isInvalid());
         assertTrue("World.getTile() should be null ", tile == null);
     }
 }

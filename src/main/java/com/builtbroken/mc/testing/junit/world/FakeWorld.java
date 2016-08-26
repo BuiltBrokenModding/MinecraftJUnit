@@ -16,6 +16,7 @@ public class FakeWorld extends AbstractFakeWorld
 {
     public FakeWorld(FakeWorldSaveHandler saveHandler, WorldSettings settings, WorldProvider worldProvider, boolean client) {
         super(saveHandler, new WorldInfo(settings, "FakeWorld"), worldProvider, new Profiler(), client);
+        provider.registerWorld(this);
     }
 
     public static FakeWorld newWorld(String name)
