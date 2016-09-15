@@ -1,38 +1,49 @@
 package com.builtbroken.mc.testing.junit.server;
 
 import net.minecraft.command.ICommandSender;
-import net.minecraft.command.ServerCommand;
 import net.minecraft.crash.CrashReport;
-import net.minecraft.profiler.PlayerUsageSnooper;
-import net.minecraft.server.dedicated.DedicatedPlayerList;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import net.minecraft.profiler.Snooper;
+import net.minecraft.server.dedicated.PropertyManager;
+import net.minecraft.server.management.PlayerProfileCache;
+import net.minecraft.util.datafix.DataFixesManager;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.Proxy;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
+
+import com.mojang.authlib.GameProfileRepository;
+import com.mojang.authlib.minecraft.MinecraftSessionService;
+import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class FakeDedicatedServer extends net.minecraft.server.dedicated.DedicatedServer
 {
     private static final Logger logger = LogManager.getLogger();
     public final List pendingCommandList = Collections.synchronizedList(new ArrayList());
 
+    private static YggdrasilAuthenticationService service = new YggdrasilAuthenticationService(Proxy.NO_PROXY, UUID.randomUUID().toString());
+    private static MinecraftSessionService sessionService = service.createMinecraftSessionService();
+    private static GameProfileRepository profileRepository = service.createProfileRepository();
+
+    private static final File CACHE = new File("usercache.json");
+
     public FakeDedicatedServer(File file)
     {
-        super(file);
+        super(file, DataFixesManager.createFixer(), service, sessionService, profileRepository, new PlayerProfileCache(profileRepository, new File(file, CACHE.getName())));
         Set<Thread> threadSet = Thread.getAllStackTraces().keySet();
         Thread[] threadArray = threadSet.toArray(new Thread[threadSet.size()]);
 
         //http://stackoverflow.com/questions/15370120/get-thread-by-name
-        for (int i = 0; i < threadArray.length; i++)
-        {
-            if (threadArray[i].getName().equals("Server Infinisleeper"))
-            {
+        for (Thread t : threadArray) {
+            if (t.getName().equals("Server Infinisleeper")) {
                 System.out.println("Killed 'Server Infinisleeper' thread");
-                threadArray[i].stop();
+                t.stop();
             }
         }
 
@@ -40,17 +51,16 @@ public class FakeDedicatedServer extends net.minecraft.server.dedicated.Dedicate
 
         this.setHostname("127.0.0.1");
         this.setServerPort(25565);
-        this.func_152361_a(new DedicatedPlayerList(this));
-        this.func_147136_ar();
+        this.isAnnouncingPlayerAchievements();
         this.isCommandBlockEnabled();
         this.getOpPermissionLevel();
         this.isSnooperEnabled();
         this.setBuildLimit(256);
-
+        this.settings = new PropertyManager(new File("fakeserver.properties"));
     }
 
     @Override
-    protected boolean startServer() throws IOException
+    public boolean startServer() throws IOException
     {
         return true;
     }
@@ -92,25 +102,23 @@ public class FakeDedicatedServer extends net.minecraft.server.dedicated.Dedicate
     }
 
     @Override
-    public void func_143006_e(int p_143006_1_)
-    {
+    public void setPlayerIdleTimeout(int idleTimeout) {
 
     }
 
     @Override
-    public boolean func_152363_m()
-    {
-        return false;
-    }
-
-    @Override
-    public boolean func_147136_ar()
+    public boolean canStructuresSpawn()
     {
         return false;
     }
 
     @Override
-    protected boolean func_152368_aE() throws IOException
+    public boolean isAnnouncingPlayerAchievements() {
+        return false;
+    }
+
+    @Override
+    protected boolean convertFiles() throws IOException
     {
         return false;
     }
@@ -150,7 +158,7 @@ public class FakeDedicatedServer extends net.minecraft.server.dedicated.Dedicate
     }
 
     @Override
-    public void addServerStatsToSnooper(PlayerUsageSnooper p_70000_1_)
+    public void addServerStatsToSnooper(Snooper playerSnooper)
     {
 
     }
@@ -164,16 +172,16 @@ public class FakeDedicatedServer extends net.minecraft.server.dedicated.Dedicate
     @Override
     public void addPendingCommand(String p_71331_1_, ICommandSender p_71331_2_)
     {
-        this.pendingCommandList.add(new ServerCommand(p_71331_1_, p_71331_2_));
+        //this.pendingCommandList.add(new ServerCommand(p_71331_1_, p_71331_2_));
     }
 
     @Override
     public void executePendingCommands()
     {
-        while (!this.pendingCommandList.isEmpty())
+        /*while (!this.pendingCommandList.isEmpty())
         {
             ServerCommand servercommand = (ServerCommand) this.pendingCommandList.remove(0);
             this.getCommandManager().executeCommand(servercommand.sender, servercommand.command);
-        }
+        }*/
     }
 }

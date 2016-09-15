@@ -1,10 +1,11 @@
 package com.builtbroken.mc.testing.junit;
 
 import com.google.common.collect.Lists;
-import cpw.mods.fml.common.IFuelHandler;
+import net.minecraftforge.fml.common.IFuelHandler;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
+import net.minecraft.util.ResourceLocation;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -40,17 +41,18 @@ public class ModRegistry
      */
     public static <B extends Block> B registerBlock(B block, Class<? extends ItemBlock> itemclass, String name)
     {
-        if (!Block.blockRegistry.containsKey(name))
+        ResourceLocation location = new ResourceLocation(name);
+        if (!Block.REGISTRY.containsKey(location))
         {
             int id = nextID++;
-            Block.blockRegistry.addObject(id, name, block);
+            Block.REGISTRY.register(id, location, block);
             try
             {
                 Constructor con = itemclass.getConstructor(Block.class);
                 ItemBlock itemBlock = (ItemBlock) con.newInstance(block);
                 if (itemBlock != null)
                 {
-                    Item.itemRegistry.addObject(id, name, itemBlock);
+                    Item.REGISTRY.register(id, location, itemBlock);
                 }
             } catch (NoSuchMethodException e)
             {

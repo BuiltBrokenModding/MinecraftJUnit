@@ -1,12 +1,14 @@
 package com.builtbroken.mc.testing.junit.world;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.ChunkPosition;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.chunk.ChunkPrimer;
 import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
 
 /**
@@ -19,150 +21,141 @@ public class FakeChunk extends Chunk
         super(p_i1995_1_, p_i1995_2_, p_i1995_3_);
     }
 
-    public FakeChunk(World p_i45446_1_, Block[] p_i45446_2_, int p_i45446_3_, int p_i45446_4_)
+    public FakeChunk(World p_i45446_1_, ChunkPrimer p_i45446_2_, int p_i45446_3_, int p_i45446_4_)
     {
         super(p_i45446_1_, p_i45446_2_, p_i45446_3_, p_i45446_4_);
     }
 
-    public FakeChunk(World p_i45447_1_, Block[] p_i45447_2_, byte[] p_i45447_3_, int p_i45447_4_, int p_i45447_5_)
-    {
-        super(p_i45447_1_, p_i45447_2_, p_i45447_3_, p_i45447_4_, p_i45447_5_);
-    }
-
     @Override
-    public boolean func_150807_a(int x, int y, int z, Block block, int meta)
+    public IBlockState setBlockState(BlockPos pos, IBlockState state)
     {
-        debug("setBlock(" + x + ", " + y + ", " + z + ", " + block + ", " + meta + ")");
-        int i1 = z << 4 | x;
+        debug(String.format("setBlockState(%s, %s)", pos, state));
+        int x = pos.getX() & 15;
+        int y = pos.getY();
+        int k = pos.getZ() & 15;
+        int z = k << 4 | x;
 
-        if (y >= this.precipitationHeightMap[i1] - 1)
+        if (y >= this.precipitationHeightMap[z] - 1)
         {
-            this.precipitationHeightMap[i1] = -999;
+            this.precipitationHeightMap[z] = -999;
         }
 
-        int j1 = this.heightMap[i1];
-        Block block1 = this.getBlock(x, y, z);
-        int k1 = this.getBlockMetadata(x, y, z);
+        int i1 = this.heightMap[z];
+        IBlockState iblockstate = this.getBlockState(pos);
 
-        debug("  prev Block: " + block1 + " Meta: " + k1);
-
-        if (block1 == block && k1 == meta)
+        if (iblockstate == state)
         {
-            debug("  no change in block ignoring set call");
-            return false;
-        } else
+            return null;
+        }
+        else
         {
-            ExtendedBlockStorage extendedblockstorage = this.getBlockStorageArray()[y >> 4];
+            Block block = state.getBlock();
+            Block block1 = iblockstate.getBlock();
+            debug(String.format("New block: %s | Old block: %s", block, block1));
+            int k1 = block1.getLightOpacity(iblockstate, this.worldObj, pos); // Relocate old light value lookup here, so that it is called before TE is removed.
+            ExtendedBlockStorage extendedblockstorage = this.storageArrays[y >> 4];
             debug("  ExtendedBlockStorage[" + (y >> 4) + "] = " + extendedblockstorage);
             boolean flag = false;
 
             if (extendedblockstorage == null)
             {
-                if (block == Blocks.air)
+                if (block == Blocks.AIR)
                 {
-                    debug("  eb is null and block is air. Ignoring block set call");
-                    return false;
+                    debug("Block is air.");
+                    return null;
                 }
 
-                extendedblockstorage = this.getBlockStorageArray()[y >> 4] = new ExtendedBlockStorage(y >> 4 << 4, !this.worldObj.provider.hasNoSky);
-                flag = y >= j1;
+                extendedblockstorage = this.storageArrays[y >> 4] = new ExtendedBlockStorage(y >> 4 << 4, !this.worldObj.provider.getHasNoSky());
+                flag = y >= i1;
             }
 
-            int l1 = this.xPosition * 16 + x;
-            int i2 = this.zPosition * 16 + z;
+            extendedblockstorage.set(x, y & 15, k, state);
 
-            int k2 = block1.getLightOpacity(this.worldObj, l1, y, i2);
-
-            if (!this.worldObj.isRemote)
+            //if (block1 != block)
             {
-                block1.onBlockPreDestroy(this.worldObj, l1, y, i2, k1);
-            }
-
-            extendedblockstorage.func_150818_a(x, y & 15, z, block);
-            extendedblockstorage.setExtBlockMetadata(x, y & 15, z, meta); // This line duplicates the one below, so breakBlock fires with valid worldstate
-
-            if (!this.worldObj.isRemote)
-            {
-                block1.breakBlock(this.worldObj, l1, y, i2, block1, k1);
-                // After breakBlock a phantom TE might have been created with incorrect meta. This attempts to kill that phantom TE so the normal one can be create properly later
-                TileEntity te = this.getTileEntityUnsafe(x & 0x0F, y, z & 0x0F);
-                if (te != null && te.shouldRefresh(block1, getBlock(x & 0x0F, y, z & 0x0F), k1, getBlockMetadata(x & 0x0F, y, z & 0x0F), worldObj, l1, y, i2))
+                if (!this.worldObj.isRemote)
                 {
-                    this.removeTileEntity(x & 0x0F, y, z & 0x0F);
+                    if (block1 != block) //Only fire block breaks when the block changes.
+                        block1.breakBlock(this.worldObj, pos, iblockstate);
+                    TileEntity te = this.getTileEntity(pos, Chunk.EnumCreateEntityType.CHECK);
+                    if (te != null && te.shouldRefresh(this.worldObj, pos, iblockstate, state)) this.worldObj.removeTileEntity(pos);
                 }
-            } else if (block1.hasTileEntity(k1))
-            {
-                TileEntity te = this.getTileEntityUnsafe(x & 0x0F, y, z & 0x0F);
-                if (te != null && te.shouldRefresh(block1, block, k1, meta, worldObj, l1, y, i2))
+                else if (block1.hasTileEntity(iblockstate))
                 {
-                    this.worldObj.removeTileEntity(l1, y, i2);
+                    TileEntity te = this.getTileEntity(pos, Chunk.EnumCreateEntityType.CHECK);
+                    if (te != null && te.shouldRefresh(this.worldObj, pos, iblockstate, state)) {
+                        this.worldObj.removeTileEntity(pos);
+                    }
                 }
             }
 
-            if (extendedblockstorage.getBlockByExtId(x, y & 15, z) != block)
+            /*if (extendedblockstorage.s(x, y & 15, k) != block)
             {
-                return false;
-            } else
+                return null;
+            }
+            else*/
             {
-                extendedblockstorage.setExtBlockMetadata(x, y & 15, z, meta);
-
                 if (flag)
                 {
                     this.generateSkylightMap();
-                } else
+                }
+                else
                 {
-                    int j2 = block.getLightOpacity(this.worldObj, l1, y, i2);
+                    int j1 = block.getLightOpacity(iblockstate, this.worldObj, pos);
 
-                    if (j2 > 0)
+                    if (j1 > 0)
                     {
-                        if (y >= j1)
+                        if (y >= i1)
                         {
-                            //TODO this.relightBlock(x, y + 1, z);
+                            this.relightBlock(x, y + 1, k);
                         }
-                    } else if (y == j1 - 1)
+                    }
+                    else if (y == i1 - 1)
                     {
-                        //TODO this.relightBlock(x, y, z);
+                        this.relightBlock(x, y, k);
                     }
 
-                    if (j2 != k2 && (j2 < k2 || this.getSavedLightValue(EnumSkyBlock.Sky, x, y, z) > 0 || this.getSavedLightValue(EnumSkyBlock.Block, x, y, z) > 0))
+                    if (j1 != k1 && (j1 < k1 || this.getLightFor(EnumSkyBlock.SKY, pos) > 0 || this.getLightFor(EnumSkyBlock.BLOCK, pos) > 0))
                     {
-                        //TODO this.propagateSkylightOcclusion(x, z);
+                        this.propagateSkylightOcclusion(x, k);
                     }
                 }
 
-                TileEntity tileentity;
-
-                if (!this.worldObj.isRemote)
+                if (!this.worldObj.isRemote && block1 != block)
                 {
-                    block.onBlockAdded(this.worldObj, l1, y, i2);
+                    block.onBlockAdded(this.worldObj, pos, state);
                 }
 
-                if (block.hasTileEntity(meta))
+                if (block.hasTileEntity(state))
                 {
-                    tileentity = this.func_150806_e(x, y, z);
+                    TileEntity tileentity1 = this.getTileEntity(pos, Chunk.EnumCreateEntityType.CHECK);
 
-                    if (tileentity != null)
+                    if (tileentity1 == null)
                     {
-                        tileentity.updateContainingBlockInfo();
-                        tileentity.blockMetadata = meta;
+                        tileentity1 = block.createTileEntity(this.worldObj, state);
+                        this.worldObj.setTileEntity(pos, tileentity1);
+                    }
+
+                    if (tileentity1 != null)
+                    {
+                        tileentity1.updateContainingBlockInfo();
                     }
                 }
 
-                this.isModified = true;
-                return true;
+                this.setModified(true);
+                return iblockstate;
             }
         }
     }
 
     @Override
-    public void removeTileEntity(int x, int y, int z)
+    public void removeTileEntity(BlockPos pos)
     {
-        debug("removeTileEntity(" + x + ", " + y + ", " + z + ")");
-        ChunkPosition chunkposition = new ChunkPosition(x, y, z);
+        debug("removeTileEntity(" + pos + ")");
 
         if (this.isChunkLoaded)
         {
-            TileEntity tileentity = (TileEntity) this.chunkTileEntityMap.remove(chunkposition);
+            TileEntity tileentity = (TileEntity) this.chunkTileEntityMap.remove(pos);
             debug(" removed tile = " + tileentity);
             if (tileentity != null)
             {
@@ -173,8 +166,8 @@ public class FakeChunk extends Chunk
 
     protected void debug(String msg)
     {
-        if (worldObj instanceof AbstractFakeWorld && ((AbstractFakeWorld) worldObj).debugInfo)
-            ((AbstractFakeWorld) worldObj).logger.info(this + " " + msg);
+        if (getWorld() instanceof AbstractFakeWorld && ((AbstractFakeWorld) getWorld()).debugInfo)
+            ((AbstractFakeWorld) getWorld()).logger.info(this + " " + msg);
     }
 
 }
