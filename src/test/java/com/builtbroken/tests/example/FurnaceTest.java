@@ -8,7 +8,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityFurnace;
+<<<<<<< HEAD
 import net.minecraft.util.math.BlockPos;
+=======
+import net.minecraft.util.BlockPos;
+>>>>>>> 2a65d299071a448d5ffa467bb4d4936953005450
 import net.minecraft.world.World;
 
 import com.builtbroken.mc.testing.junit.AbstractTest;
@@ -32,6 +36,7 @@ public class FurnaceTest extends AbstractTest {
     @Test
     public void testFurnacePlacement()
     {
+<<<<<<< HEAD
         if (Blocks.FURNACE != null)
         {
             BlockPos pos = new BlockPos(0, 0, 0);
@@ -39,6 +44,15 @@ public class FurnaceTest extends AbstractTest {
             IBlockState state = world.getBlockState(pos);
             Block block = state.getBlock();
             assertEquals("Should be a furnace.", block, Blocks.FURNACE);
+=======
+        if (Blocks.furnace != null)
+        {
+            BlockPos pos = new BlockPos(0, 0, 0);
+            world.setBlockState(pos, Blocks.furnace.getDefaultState());
+            IBlockState state = world.getBlockState(pos);
+            Block block = state.getBlock();
+            assertEquals("Should be a furnace.", block, Blocks.furnace);
+>>>>>>> 2a65d299071a448d5ffa467bb4d4936953005450
             TileEntity tile = world.getTileEntity(pos);
             assertSame("World.getTileEntity() should have returned a furnace tile. Actually got " + tile, tile.getClass(), TileEntityFurnace.class);
         } else
@@ -51,7 +65,11 @@ public class FurnaceTest extends AbstractTest {
     public void testFurnaceRemoval()
     {
         BlockPos pos = new BlockPos(0, 0, 0);
+<<<<<<< HEAD
         world.setBlockState(pos, Blocks.FURNACE.getDefaultState());
+=======
+        world.setBlockState(pos, Blocks.furnace.getDefaultState());
+>>>>>>> 2a65d299071a448d5ffa467bb4d4936953005450
         world.setBlockToAir(pos);
         world.updateEntities();
         assertTrue("Tile should have been removed", world.getTileEntity(pos) == null);

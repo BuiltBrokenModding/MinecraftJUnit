@@ -21,4 +21,9 @@ public class FakeWorldProvider extends WorldProvider
     public DimensionType getDimensionType() {
         return DimensionType.register("FakeWorld", "FakeWorld", 10, getClass(), true);
     }
+
+    @Override
+    public String getInternalNameSuffix() {
+        return "FakeWorld";
+    }
 }

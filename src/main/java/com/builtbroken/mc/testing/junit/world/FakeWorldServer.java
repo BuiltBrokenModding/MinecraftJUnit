@@ -45,7 +45,11 @@ public class FakeWorldServer extends WorldServer
             WorldInfo worldInfo2 = new WorldInfo(settings, name);
             FakeWorldSaveHandler handler2 = new FakeWorldSaveHandler(worldInfo2);
 
+<<<<<<< HEAD
             DimensionManager.setWorld(0, new FakeWorldServer(new WorldInfo(settings2, "overworld"), server, new File(baseFolder, name), handler2, 0, settings2), server);
+=======
+            DimensionManager.setWorld(0, new FakeWorldServer(new WorldInfo(settings2, "overworld"), server, new File(baseFolder, name), handler2, 0, settings2));
+>>>>>>> 2a65d299071a448d5ffa467bb4d4936953005450
         }
         if (!DimensionManager.isDimensionRegistered(10))
         {

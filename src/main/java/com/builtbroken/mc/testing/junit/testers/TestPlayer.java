@@ -62,7 +62,11 @@ public class TestPlayer extends EntityPlayerMP
     {
         if (throwErrorsWhenOpeningGUI)
         {
+<<<<<<< HEAD
             throw new RuntimeException("mod:" + mod + " id:" + modGuiId + " dim:" + world.provider.getDimension() + " " + x + "x " + y + "y " + z + "z");
+=======
+            throw new RuntimeException("mod:" + mod + " id:" + modGuiId + " dim:" + world.provider.getDimensionId() + " " + x + "x " + y + "y " + z + "z");
+>>>>>>> 2a65d299071a448d5ffa467bb4d4936953005450
         }
     }
 
