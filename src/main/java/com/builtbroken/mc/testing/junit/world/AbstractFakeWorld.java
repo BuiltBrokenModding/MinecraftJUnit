@@ -28,7 +28,9 @@ public class AbstractFakeWorld extends World
     {
         super(p_i45369_1_, p_i45369_2_, p_i45369_3_, p_i45369_4_, p_i45369_5_);
         logger = LogManager.getLogger("FW-" + p_i45369_2_);
-        chunkProvider = new ChunkProviderServer(this, this.saveHandler.getChunkLoader(this.provider), );
+        provider.generatorSettings = "";
+        provider.worldObj = this;
+        chunkProvider = new ChunkProviderServer(this, this.saveHandler.getChunkLoader(this.provider), provider.createChunkGenerator());
     }
 
     @Override
