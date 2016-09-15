@@ -2,19 +2,10 @@ package com.builtbroken.mc.testing.junit.server;
 
 import net.minecraft.command.ICommandSender;
 import net.minecraft.crash.CrashReport;
-<<<<<<< HEAD
 import net.minecraft.profiler.Snooper;
 import net.minecraft.server.dedicated.PropertyManager;
 import net.minecraft.server.management.PlayerProfileCache;
 import net.minecraft.util.datafix.DataFixesManager;
-=======
-import net.minecraft.profiler.PlayerUsageSnooper;
-import net.minecraft.server.dedicated.DedicatedPlayerList;
-import net.minecraft.server.dedicated.PropertyManager;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
->>>>>>> 2a65d299071a448d5ffa467bb4d4936953005450
 
 import java.io.File;
 import java.io.IOException;
@@ -60,10 +51,6 @@ public class FakeDedicatedServer extends net.minecraft.server.dedicated.Dedicate
 
         this.setHostname("127.0.0.1");
         this.setServerPort(25565);
-<<<<<<< HEAD
-=======
-        this.setConfigManager(new DedicatedPlayerList(this));
->>>>>>> 2a65d299071a448d5ffa467bb4d4936953005450
         this.isAnnouncingPlayerAchievements();
         this.isCommandBlockEnabled();
         this.getOpPermissionLevel();

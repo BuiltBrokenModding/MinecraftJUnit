@@ -4,11 +4,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
-<<<<<<< HEAD
 import net.minecraft.util.math.BlockPos;
-=======
-import net.minecraft.util.BlockPos;
->>>>>>> 2a65d299071a448d5ffa467bb4d4936953005450
 import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
@@ -56,11 +52,7 @@ public class FakeChunk extends Chunk
             Block block = state.getBlock();
             Block block1 = iblockstate.getBlock();
             debug(String.format("New block: %s | Old block: %s", block, block1));
-<<<<<<< HEAD
             int k1 = block1.getLightOpacity(iblockstate, this.worldObj, pos); // Relocate old light value lookup here, so that it is called before TE is removed.
-=======
-            int k1 = block1.getLightOpacity(this.worldObj, pos); // Relocate old light value lookup here, so that it is called before TE is removed.
->>>>>>> 2a65d299071a448d5ffa467bb4d4936953005450
             ExtendedBlockStorage extendedblockstorage = this.storageArrays[y >> 4];
             debug("  ExtendedBlockStorage[" + (y >> 4) + "] = " + extendedblockstorage);
             boolean flag = false;
@@ -97,19 +89,11 @@ public class FakeChunk extends Chunk
                 }
             }
 
-<<<<<<< HEAD
             /*if (extendedblockstorage.s(x, y & 15, k) != block)
             {
                 return null;
             }
             else*/
-=======
-            if (extendedblockstorage.getBlockByExtId(x, y & 15, k) != block)
-            {
-                return null;
-            }
-            else
->>>>>>> 2a65d299071a448d5ffa467bb4d4936953005450
             {
                 if (flag)
                 {
@@ -117,11 +101,7 @@ public class FakeChunk extends Chunk
                 }
                 else
                 {
-<<<<<<< HEAD
                     int j1 = block.getLightOpacity(iblockstate, this.worldObj, pos);
-=======
-                    int j1 = block.getLightOpacity(this.worldObj, pos);
->>>>>>> 2a65d299071a448d5ffa467bb4d4936953005450
 
                     if (j1 > 0)
                     {

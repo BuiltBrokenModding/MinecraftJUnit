@@ -57,11 +57,7 @@ public class VoltzTestRunner extends Runner
     {
         try
         {
-<<<<<<< HEAD
             Object[] data = new Object[]{"", "", "", "", "1.10.2", "", Files.createTempDir(), Collections.EMPTY_LIST};
-=======
-            Object[] data = new Object[]{"", "", "", "", "1.8.9", "", Files.createTempDir(), Collections.EMPTY_LIST};
->>>>>>> 2a65d299071a448d5ffa467bb4d4936953005450
             // Setup data
             if (loader == null)
             {

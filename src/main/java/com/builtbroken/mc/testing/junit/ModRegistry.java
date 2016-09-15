@@ -42,28 +42,17 @@ public class ModRegistry
     public static <B extends Block> B registerBlock(B block, Class<? extends ItemBlock> itemclass, String name)
     {
         ResourceLocation location = new ResourceLocation(name);
-<<<<<<< HEAD
         if (!Block.REGISTRY.containsKey(location))
         {
             int id = nextID++;
             Block.REGISTRY.register(id, location, block);
-=======
-        if (!Block.blockRegistry.containsKey(location))
-        {
-            int id = nextID++;
-            Block.blockRegistry.register(id, location, block);
->>>>>>> 2a65d299071a448d5ffa467bb4d4936953005450
             try
             {
                 Constructor con = itemclass.getConstructor(Block.class);
                 ItemBlock itemBlock = (ItemBlock) con.newInstance(block);
                 if (itemBlock != null)
                 {
-<<<<<<< HEAD
                     Item.REGISTRY.register(id, location, itemBlock);
-=======
-                    Item.itemRegistry.register(id, location, itemBlock);
->>>>>>> 2a65d299071a448d5ffa467bb4d4936953005450
                 }
             } catch (NoSuchMethodException e)
             {
