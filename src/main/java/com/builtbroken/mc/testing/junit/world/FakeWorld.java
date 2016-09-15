@@ -30,13 +30,7 @@ public class FakeWorld extends AbstractFakeWorld
     @Override
     protected IChunkProvider createChunkProvider()
     {
-        return new ChunkProviderServer(this, new ChunkProviderEmpty(this));
-    }
-
-    @Override
-    protected int getRenderDistanceChunks()
-    {
-        return 0;
+        return new ChunkProviderServer(this, this.saveHandler.getChunkLoader(this.provider), provider.createChunkGenerator());
     }
 
     @Override

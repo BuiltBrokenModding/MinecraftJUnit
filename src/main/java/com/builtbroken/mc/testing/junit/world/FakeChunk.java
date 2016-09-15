@@ -4,7 +4,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
@@ -52,14 +52,14 @@ public class FakeChunk extends Chunk
             Block block = state.getBlock();
             Block block1 = iblockstate.getBlock();
             debug(String.format("New block: %s | Old block: %s", block, block1));
-            int k1 = block1.getLightOpacity(this.worldObj, pos); // Relocate old light value lookup here, so that it is called before TE is removed.
+            int k1 = block1.getLightOpacity(iblockstate, this.worldObj, pos); // Relocate old light value lookup here, so that it is called before TE is removed.
             ExtendedBlockStorage extendedblockstorage = this.storageArrays[y >> 4];
             debug("  ExtendedBlockStorage[" + (y >> 4) + "] = " + extendedblockstorage);
             boolean flag = false;
 
             if (extendedblockstorage == null)
             {
-                if (block == Blocks.air)
+                if (block == Blocks.AIR)
                 {
                     debug("Block is air.");
                     return null;
@@ -89,11 +89,11 @@ public class FakeChunk extends Chunk
                 }
             }
 
-            if (extendedblockstorage.getBlockByExtId(x, y & 15, k) != block)
+            /*if (extendedblockstorage.s(x, y & 15, k) != block)
             {
                 return null;
             }
-            else
+            else*/
             {
                 if (flag)
                 {
@@ -101,7 +101,7 @@ public class FakeChunk extends Chunk
                 }
                 else
                 {
-                    int j1 = block.getLightOpacity(this.worldObj, pos);
+                    int j1 = block.getLightOpacity(iblockstate, this.worldObj, pos);
 
                     if (j1 > 0)
                     {

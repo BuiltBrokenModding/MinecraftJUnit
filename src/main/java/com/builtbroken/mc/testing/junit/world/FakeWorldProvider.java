@@ -1,5 +1,6 @@
 package com.builtbroken.mc.testing.junit.world;
 
+import net.minecraft.world.DimensionType;
 import net.minecraft.world.WorldProvider;
 import net.minecraft.world.WorldType;
 
@@ -17,13 +18,7 @@ public class FakeWorldProvider extends WorldProvider
     }
 
     @Override
-    public String getDimensionName()
-    {
-        return "FakeWorld";
-    }
-
-    @Override
-    public String getInternalNameSuffix() {
-        return "FakeWorld";
+    public DimensionType getDimensionType() {
+        return DimensionType.register("FakeWorld", "FakeWorld", 10, getClass(), true);
     }
 }

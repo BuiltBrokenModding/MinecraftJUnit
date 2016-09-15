@@ -1,14 +1,14 @@
 package com.builtbroken.mc.testing.junit.testers;
 
-import com.mojang.authlib.GameProfile;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.management.ItemInWorldManager;
+import net.minecraft.server.management.PlayerInteractionManager;
 import net.minecraft.stats.StatBase;
-import net.minecraft.util.IChatComponent;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+
+import com.mojang.authlib.GameProfile;
 
 /**
  * Version of the player designed for JUnit testing. Needs a server instance, server world, and profile data to be created.
@@ -33,19 +33,19 @@ public class TestPlayer extends EntityPlayerMP
      */
     public TestPlayer(MinecraftServer server, WorldServer world, GameProfile profile)
     {
-        super(server, world, profile, new ItemInWorldManager(world));
+        super(server, world, profile, new PlayerInteractionManager(world));
     }
 
     @Override
     public boolean canCommandSenderUseCommand(int i, String s) { return false; }
 
     @Override
-    public void addChatComponentMessage(IChatComponent chatmessagecomponent)
+    public void addChatComponentMessage(ITextComponent component)
     {
         if (outputChat)
-            System.out.println("[ToPlayer]: " + chatmessagecomponent.getFormattedText());
+            System.out.println("[ToPlayer]: " + component.getFormattedText());
         if (throwErrorsWhenReceivingChat)
-            throw new RuntimeException(chatmessagecomponent.getFormattedText());
+            throw new RuntimeException(component.getFormattedText());
     }
 
     @Override
@@ -62,7 +62,7 @@ public class TestPlayer extends EntityPlayerMP
     {
         if (throwErrorsWhenOpeningGUI)
         {
-            throw new RuntimeException("mod:" + mod + " id:" + modGuiId + " dim:" + world.provider.getDimensionId() + " " + x + "x " + y + "y " + z + "z");
+            throw new RuntimeException("mod:" + mod + " id:" + modGuiId + " dim:" + world.provider.getDimension() + " " + x + "x " + y + "y " + z + "z");
         }
     }
 
@@ -77,8 +77,8 @@ public class TestPlayer extends EntityPlayerMP
     public void reset()
     {
         this.setLocationAndAngles(0, 0, 0, 0, 0);
-        this.inventory.mainInventory = new ItemStack[36];
-        this.inventory.armorInventory = new ItemStack[4];
+        /*this.inventory.mainInventory = new ItemStack[36];
+        this.inventory.armorInventory = new ItemStack[4];*/
         this.inventory.currentItem = 0;
     }
 }

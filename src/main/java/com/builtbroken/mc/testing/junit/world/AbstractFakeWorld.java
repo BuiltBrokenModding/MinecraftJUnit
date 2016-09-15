@@ -4,7 +4,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.profiler.Profiler;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldProvider;
@@ -28,7 +28,7 @@ public class AbstractFakeWorld extends World
     {
         super(p_i45369_1_, p_i45369_2_, p_i45369_3_, p_i45369_4_, p_i45369_5_);
         logger = LogManager.getLogger("FW-" + p_i45369_2_);
-        chunkProvider = new ChunkProviderServer(this, new ChunkProviderEmpty(this));
+        chunkProvider = new ChunkProviderServer(this, this.saveHandler.getChunkLoader(this.provider), );
     }
 
     @Override
@@ -110,7 +110,7 @@ public class AbstractFakeWorld extends World
     }
 
     @Override
-    protected int getRenderDistanceChunks() {
-        return 0;
+    protected boolean isChunkLoaded(int x, int z, boolean allowEmpty) {
+        return false;
     }
 }

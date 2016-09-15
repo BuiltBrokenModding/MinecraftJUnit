@@ -3,6 +3,7 @@ package com.builtbroken.mc.testing.junit.world;
 import com.builtbroken.mc.testing.junit.server.FakeDedicatedServer;
 import net.minecraft.profiler.Profiler;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.DimensionType;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.WorldSettings;
 import net.minecraft.world.WorldType;
@@ -43,12 +44,12 @@ public class FakeWorldServer extends WorldServer
             WorldInfo worldInfo2 = new WorldInfo(settings, name);
             FakeWorldSaveHandler handler2 = new FakeWorldSaveHandler(worldInfo2);
 
-            DimensionManager.setWorld(0, new FakeWorldServer(new WorldInfo(settings2, "overworld"), server, new File(baseFolder, name), handler2, 0, settings2));
+            DimensionManager.setWorld(0, new FakeWorldServer(new WorldInfo(settings2, "overworld"), server, new File(baseFolder, name), handler2, 0, settings2), server);
         }
         if (!DimensionManager.isDimensionRegistered(10))
         {
-            DimensionManager.registerProviderType(10, FakeWorldProvider.class, false);
-            DimensionManager.registerDimension(10, 10);
+            DimensionManager.createProviderFor(10);
+            DimensionManager.registerDimension(10, DimensionType.valueOf("FakeWorld"));
         }
         return new FakeWorldServer(new WorldInfo(settings, name), server, new File(baseFolder, name), handler, 10, settings);
     }

@@ -57,7 +57,7 @@ public class VoltzTestRunner extends Runner
     {
         try
         {
-            Object[] data = new Object[]{"", "", "", "", "1.8.9", "", Files.createTempDir(), Collections.EMPTY_LIST};
+            Object[] data = new Object[]{"", "", "", "", "1.9.4", "", Files.createTempDir(), Collections.EMPTY_LIST};
             // Setup data
             if (loader == null)
             {
@@ -90,7 +90,7 @@ public class VoltzTestRunner extends Runner
                     e.printStackTrace();
                     if (e instanceof NullPointerException)
                     {
-                        System.out.println("BlockReg: " + Block.blockRegistry + "  Size: " + Block.blockRegistry.getKeys().size());
+                        System.out.println("BlockReg: " + Block.REGISTRY + "  Size: " + Block.REGISTRY.getKeys().size());
 
                         Field[] fields = Blocks.class.getDeclaredFields();
                         System.out.println("Fields: " + fields.length);
@@ -204,6 +204,7 @@ public class VoltzTestRunner extends Runner
             //Clean up data for the entire test class
             tearDownClass.invoke(test);
 
+            // TODO: 9/15/2016 possibly setup a method here to clean the files after they are created to save on HDD space
         }
         catch (InvocationTargetException e)
         {
