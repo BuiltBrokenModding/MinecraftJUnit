@@ -120,7 +120,7 @@ public class VoltzTestRunner extends Runner
 
             for (Method method : test_class.getMethods())
             {
-                if(!testMethods.containsKey(method))
+                if (!testMethods.containsKey(method))
                 {
                     String name = method.getName();
                     Annotation an = method.getAnnotation(Test.class);
@@ -205,13 +205,9 @@ public class VoltzTestRunner extends Runner
             tearDownClass.invoke(test);
 
         }
-        catch (InvocationTargetException e)
+        catch (Exception e)
         {
-            e.printStackTrace();
-        }
-        catch (IllegalAccessException e)
-        {
-            e.printStackTrace();
+            notifier.fireTestFailure(new Failure(Description.createSuiteDescription(test_class), e));
         }
         notifier.fireTestRunFinished(new Result());
     }
