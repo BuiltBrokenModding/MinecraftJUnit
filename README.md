@@ -1,7 +1,7 @@
 # MinecraftJUnit
 Lib designed to support JUnit testing in a minecraft forge workspace
 
-#License
+# License
 The code and its usage is licensed under the Built Broken Public License
 https://github.com/VoltzEngine-Project/Engine/blob/development/license.md
 
