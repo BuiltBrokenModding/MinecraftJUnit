@@ -205,7 +205,7 @@ public class VoltzTestRunner extends Runner
             tearDownClass.invoke(test);
 
         }
-        catch (Exception e)
+        catch (Throwable e)
         {
             notifier.fireTestFailure(new Failure(Description.createSuiteDescription(test_class), e));
         }
