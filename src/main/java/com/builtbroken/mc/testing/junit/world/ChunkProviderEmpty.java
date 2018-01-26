@@ -42,12 +42,8 @@ public class ChunkProviderEmpty implements IChunkProvider
         return chunk;
     }
 
-    /**
-     * Unloads chunks that are marked to be unloaded. This is not guaranteed to unload every such chunk.
-     */
     @Override
-    public boolean unloadQueuedChunks()
-    {
+    public boolean tick() {
         return false;
     }
 
@@ -58,5 +54,10 @@ public class ChunkProviderEmpty implements IChunkProvider
     public String makeString()
     {
         return "sigVoidSource";
+    }
+
+    @Override
+    public boolean isChunkGeneratedAt(int x, int z) {
+        return false;
     }
 }

@@ -52,7 +52,7 @@ public class FakeChunk extends Chunk
             Block block = state.getBlock();
             Block block1 = iblockstate.getBlock();
             debug(String.format("New block: %s | Old block: %s", block, block1));
-            int k1 = block1.getLightOpacity(iblockstate, this.worldObj, pos); // Relocate old light value lookup here, so that it is called before TE is removed.
+            int k1 = block1.getLightOpacity(iblockstate, this.getWorld(), pos); // Relocate old light value lookup here, so that it is called before TE is removed.
             ExtendedBlockStorage extendedblockstorage = this.storageArrays[y >> 4];
             debug("  ExtendedBlockStorage[" + (y >> 4) + "] = " + extendedblockstorage);
             boolean flag = false;
@@ -65,7 +65,7 @@ public class FakeChunk extends Chunk
                     return null;
                 }
 
-                extendedblockstorage = this.storageArrays[y >> 4] = new ExtendedBlockStorage(y >> 4 << 4, !this.worldObj.provider.getHasNoSky());
+                extendedblockstorage = this.storageArrays[y >> 4] = new ExtendedBlockStorage(y >> 4 << 4, this.getWorld().provider.hasSkyLight());
                 flag = y >= i1;
             }
 
@@ -73,18 +73,18 @@ public class FakeChunk extends Chunk
 
             //if (block1 != block)
             {
-                if (!this.worldObj.isRemote)
+                if (!this.getWorld().isRemote)
                 {
                     if (block1 != block) //Only fire block breaks when the block changes.
-                        block1.breakBlock(this.worldObj, pos, iblockstate);
+                        block1.breakBlock(this.getWorld(), pos, iblockstate);
                     TileEntity te = this.getTileEntity(pos, Chunk.EnumCreateEntityType.CHECK);
-                    if (te != null && te.shouldRefresh(this.worldObj, pos, iblockstate, state)) this.worldObj.removeTileEntity(pos);
+                    if (te != null && te.shouldRefresh(this.getWorld(), pos, iblockstate, state)) this.getWorld().removeTileEntity(pos);
                 }
                 else if (block1.hasTileEntity(iblockstate))
                 {
                     TileEntity te = this.getTileEntity(pos, Chunk.EnumCreateEntityType.CHECK);
-                    if (te != null && te.shouldRefresh(this.worldObj, pos, iblockstate, state)) {
-                        this.worldObj.removeTileEntity(pos);
+                    if (te != null && te.shouldRefresh(this.getWorld(), pos, iblockstate, state)) {
+                        this.getWorld().removeTileEntity(pos);
                     }
                 }
             }
@@ -101,7 +101,7 @@ public class FakeChunk extends Chunk
                 }
                 else
                 {
-                    int j1 = block.getLightOpacity(iblockstate, this.worldObj, pos);
+                    int j1 = block.getLightOpacity(iblockstate, this.getWorld(), pos);
 
                     if (j1 > 0)
                     {
@@ -121,9 +121,9 @@ public class FakeChunk extends Chunk
                     }
                 }
 
-                if (!this.worldObj.isRemote && block1 != block)
+                if (!this.getWorld().isRemote && block1 != block)
                 {
-                    block.onBlockAdded(this.worldObj, pos, state);
+                    block.onBlockAdded(this.getWorld(), pos, state);
                 }
 
                 if (block.hasTileEntity(state))
@@ -132,8 +132,8 @@ public class FakeChunk extends Chunk
 
                     if (tileentity1 == null)
                     {
-                        tileentity1 = block.createTileEntity(this.worldObj, state);
-                        this.worldObj.setTileEntity(pos, tileentity1);
+                        tileentity1 = block.createTileEntity(this.getWorld(), state);
+                        this.getWorld().setTileEntity(pos, tileentity1);
                     }
 
                     if (tileentity1 != null)
@@ -153,9 +153,9 @@ public class FakeChunk extends Chunk
     {
         debug("removeTileEntity(" + pos + ")");
 
-        if (this.isChunkLoaded)
+        if (this.isLoaded())
         {
-            TileEntity tileentity = (TileEntity) this.chunkTileEntityMap.remove(pos);
+            TileEntity tileentity = this.tileEntities.remove(pos);
             debug(" removed tile = " + tileentity);
             if (tileentity != null)
             {

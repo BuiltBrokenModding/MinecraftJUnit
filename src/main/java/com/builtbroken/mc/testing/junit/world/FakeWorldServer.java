@@ -10,6 +10,7 @@ import net.minecraft.world.WorldSettings;
 import net.minecraft.world.WorldType;
 import net.minecraft.world.storage.WorldInfo;
 import net.minecraftforge.common.DimensionManager;
+import net.minecraftforge.common.util.EnumHelper;
 
 import java.io.File;
 
@@ -49,8 +50,8 @@ public class FakeWorldServer extends WorldServer
         }
         if (!DimensionManager.isDimensionRegistered(10))
         {
+            DimensionManager.registerDimension(10, DimensionType.OVERWORLD);
             DimensionManager.createProviderFor(10);
-            DimensionManager.registerDimension(10, DimensionType.valueOf("FakeWorld"));
         }
         return new FakeWorldServer(new WorldInfo(settings, name), server, new File(baseFolder, name), handler, 10, settings);
     }

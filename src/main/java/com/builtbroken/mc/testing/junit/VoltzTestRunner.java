@@ -57,18 +57,12 @@ public class VoltzTestRunner extends Runner
     {
         try
         {
-            Object[] data = new Object[]{"", "", "", "", "1.10.2", "", Files.createTempDir(), Collections.EMPTY_LIST};
+            Object[] data = new Object[]{"", "", "", "", "1.12.2", "", Files.createTempDir(), Collections.EMPTY_LIST};
             // Setup data
             if (loader == null)
             {
                 URL[] urLs = ((URLClassLoader) Launch.class.getClassLoader()).getURLs();
                 loader = new LaunchClassLoader(urLs);
-
-                //Set side to client
-                Class<?> fmlRelaunchLogClass = loader.loadClass("net.minecraftforge.fml.relauncher.FMLRelaunchLog");
-                Field sideField = fmlRelaunchLogClass.getDeclaredField("side");
-                sideField.setAccessible(true);
-                sideField.set(fmlRelaunchLogClass, Enum.valueOf((Class<Enum>) sideField.getType(), "CLIENT"));
 
                 //Inject data into FML Loader
                 Class<?> fmlLoader = loader.loadClass("net.minecraftforge.fml.common.Loader");

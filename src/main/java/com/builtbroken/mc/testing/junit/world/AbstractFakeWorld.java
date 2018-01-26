@@ -16,6 +16,8 @@ import net.minecraft.world.storage.WorldInfo;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.annotation.ParametersAreNonnullByDefault;
+
 /**
  * Created by Cow Pi on 8/24/2015.
  */
@@ -29,11 +31,12 @@ public class AbstractFakeWorld extends World
         super(p_i45369_1_, p_i45369_2_, p_i45369_3_, p_i45369_4_, p_i45369_5_);
         logger = LogManager.getLogger("FW-" + p_i45369_2_);
         provider.generatorSettings = "";
-        provider.worldObj = this;
+        provider.world = this;
         chunkProvider = new ChunkProviderServer(this, this.saveHandler.getChunkLoader(this.provider), provider.createChunkGenerator());
     }
 
     @Override
+    @ParametersAreNonnullByDefault
     public boolean setBlockState(BlockPos pos, IBlockState block, int flags)
     {
         int x = pos.getX();
@@ -72,9 +75,9 @@ public class AbstractFakeWorld extends World
                     blockSnapshot = null;
                 }
 
-                this.theProfiler.startSection("checkLight");
+                this.profiler.startSection("checkLight");
                 this.checkLightFor(EnumSkyBlock.BLOCK, pos);
-                this.theProfiler.endSection();
+                this.profiler.endSection();
 
                 if (flag && blockSnapshot == null) // Don't notify clients or update physics while capturing blockstates
                 {
