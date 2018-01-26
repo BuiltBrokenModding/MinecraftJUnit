@@ -3,7 +3,9 @@ package com.builtbroken.mc.testing.junit.server;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.profiler.Snooper;
+import net.minecraft.server.dedicated.DedicatedPlayerList;
 import net.minecraft.server.dedicated.PropertyManager;
+import net.minecraft.server.management.PlayerList;
 import net.minecraft.server.management.PlayerProfileCache;
 import net.minecraft.util.datafix.DataFixesManager;
 
@@ -19,9 +21,12 @@ import java.util.UUID;
 import com.mojang.authlib.GameProfileRepository;
 import com.mojang.authlib.minecraft.MinecraftSessionService;
 import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+@SideOnly(Side.SERVER)
 public class FakeDedicatedServer extends net.minecraft.server.dedicated.DedicatedServer
 {
     private static final Logger logger = LogManager.getLogger();
@@ -51,7 +56,6 @@ public class FakeDedicatedServer extends net.minecraft.server.dedicated.Dedicate
 
         this.setHostname("127.0.0.1");
         this.setServerPort(25565);
-        this.isAnnouncingPlayerAchievements();
         this.isCommandBlockEnabled();
         this.getOpPermissionLevel();
         this.isSnooperEnabled();
@@ -59,8 +63,13 @@ public class FakeDedicatedServer extends net.minecraft.server.dedicated.Dedicate
         this.settings = new PropertyManager(new File("fakeserver.properties"));
     }
 
+    public DedicatedPlayerList getPlayerList()
+    {
+        return new DedicatedPlayerList(this);
+    }
+
     @Override
-    public boolean startServer() throws IOException
+    public boolean init() throws IOException
     {
         return true;
     }
@@ -109,11 +118,6 @@ public class FakeDedicatedServer extends net.minecraft.server.dedicated.Dedicate
     @Override
     public boolean canStructuresSpawn()
     {
-        return false;
-    }
-
-    @Override
-    public boolean isAnnouncingPlayerAchievements() {
         return false;
     }
 

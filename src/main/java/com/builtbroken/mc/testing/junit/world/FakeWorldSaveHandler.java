@@ -1,6 +1,7 @@
 package com.builtbroken.mc.testing.junit.world;
 
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.datafix.DataFixer;
 import net.minecraft.world.MinecraftException;
 import net.minecraft.world.WorldProvider;
 import net.minecraft.world.chunk.storage.IChunkLoader;
@@ -41,7 +42,7 @@ public class FakeWorldSaveHandler implements ISaveHandler
     @Override
     public IChunkLoader getChunkLoader(WorldProvider provider)
     {
-        return null;
+        return new FakeChunkLoader();
     }
 
     @Override
@@ -81,6 +82,6 @@ public class FakeWorldSaveHandler implements ISaveHandler
 
     @Override
     public TemplateManager getStructureTemplateManager() {
-        return new TemplateManager("MinecraftUnitTesting");
+        return new TemplateManager("MinecraftUnitTesting", new DataFixer(1));
     }
 }

@@ -37,18 +37,6 @@ public class TestPlayer extends EntityPlayerMP
     }
 
     @Override
-    public boolean canCommandSenderUseCommand(int i, String s) { return false; }
-
-    @Override
-    public void addChatComponentMessage(ITextComponent component)
-    {
-        if (outputChat)
-            System.out.println("[ToPlayer]: " + component.getFormattedText());
-        if (throwErrorsWhenReceivingChat)
-            throw new RuntimeException(component.getFormattedText());
-    }
-
-    @Override
     public void addStat(StatBase par1StatBase, int par2)
     {
         if (throwErrorsWhenReceivingStats)
