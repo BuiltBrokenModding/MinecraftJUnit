@@ -1,6 +1,5 @@
 package com.builtbroken.mc.testing.junit.world;
 
-import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.profiler.Profiler;
@@ -12,7 +11,6 @@ import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.storage.ISaveHandler;
 import net.minecraft.world.storage.WorldInfo;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -26,12 +24,11 @@ public class AbstractFakeWorld extends World
     public boolean debugInfo = true;
     public Logger logger;
 
-    public AbstractFakeWorld(ISaveHandler p_i45369_1_, WorldInfo p_i45369_2_, WorldProvider p_i45369_3_, Profiler p_i45369_4_, boolean p_i45369_5_)
+    public AbstractFakeWorld(ISaveHandler saveHandler, WorldInfo worldInfo, WorldProvider worldProvider, Profiler profiler, boolean client)
     {
-        super(p_i45369_1_, p_i45369_2_, p_i45369_3_, p_i45369_4_, p_i45369_5_);
-        logger = LogManager.getLogger("FW-" + p_i45369_2_);
-        provider.generatorSettings = "";
-        provider.world = this;
+        super(saveHandler, worldInfo, worldProvider, profiler, client);
+        worldProvider.setWorld(this);
+        logger = LogManager.getLogger("FW-" + worldInfo);
         chunkProvider = new ChunkProviderServer(this, this.saveHandler.getChunkLoader(this.provider), provider.createChunkGenerator());
     }
 
