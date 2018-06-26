@@ -9,7 +9,7 @@ buildscript {
     }
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
-        classpath 'org.ajoberstar:gradle-git:0.10.1'
+        classpath 'org.ajoberstar:grgit:2.1.0'
     }
 }
 
@@ -26,6 +26,7 @@ plugins {
 apply from: 'https://raw.githubusercontent.com/BuiltBrokenModding/BuiltBrokenScripts/1.12.2/index/index.gradle'
 apply plugin: 'com.github.kt3k.coveralls'
 apply plugin: 'jacoco'
+apply plugin: "org.ajoberstar.grgit"
 
 /* dependencies 
 {
@@ -36,22 +37,18 @@ apply plugin: 'jacoco'
 
 def currentJvm = org.gradle.internal.jvm.Jvm.current()
 
-import org.ajoberstar.grgit.Grgit
+/*import org.ajoberstar.grgit.Grgit
 
 def gitHash = 'unknown'
 if (new File(projectDir, '.git').exists()) {
     def repo = Grgit.open(project.file('.'))
     gitHash = repo.log().find().abbreviatedId
-}
+}*/
 
 jar { 
-    manifest.mainAttributes(
-            "Built-By": System.getProperty('user.name'),
-            "Created-By": currentJvm,
-            "Implementation-Title": archivesBaseName,
-            "Implementation-Version": project.version,
-            "Git-Hash": gitHash,
-    )
+    manifest = project.manifest {
+        from sharedManifest
+    }
 }
 
 def getDate() {
