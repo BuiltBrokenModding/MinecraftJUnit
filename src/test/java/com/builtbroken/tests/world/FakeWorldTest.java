@@ -3,6 +3,7 @@ package com.builtbroken.tests.world;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockChest;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Bootstrap;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.EnumFacing;
@@ -22,7 +23,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
  * JUnit test for {@link FakeWorld}
  * Created by robert on 11/13/2014.
  */
-@ExtendWith(InitLauncher.class)
 public class FakeWorldTest extends AbstractTest
 {
 
@@ -36,6 +36,7 @@ public class FakeWorldTest extends AbstractTest
     @BeforeAll
     public static void setUpForEntireClass()
     {
+        Bootstrap.register();
         world = FakeWorld.newWorld("FakeWorldTest");
     }
 

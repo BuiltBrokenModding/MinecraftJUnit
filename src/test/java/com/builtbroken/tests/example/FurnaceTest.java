@@ -4,6 +4,7 @@ import com.builtbroken.mc.testing.junit.InitLauncher;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Bootstrap;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.util.math.BlockPos;
@@ -19,12 +20,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 /**
  * @author Tyler
  */
-@ExtendWith(InitLauncher.class)
 public class FurnaceTest extends AbstractTest {
     static World world;
 
     @BeforeAll
     public static void setUpForEntireClass() {
+        Bootstrap.register();
         world = FakeWorld.newWorld("FurnaceTest");
     }
 
