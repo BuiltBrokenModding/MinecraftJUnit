@@ -1,6 +1,6 @@
 package com.builtbroken.mc.testing.junit;
 
-import junit.framework.TestCase;
+import org.junit.jupiter.api.Assertions;
 
 import java.lang.reflect.Method;
 
@@ -9,49 +9,8 @@ import java.lang.reflect.Method;
  * run the tests as these methods will be called.
  * Created by robert on 1/6/2015.
  */
-public abstract class AbstractTest extends TestCase
+public abstract class AbstractTest
 {
-    /**
-     * Builds anything that all tests for this class need
-     */
-    public void setUpForEntireClass()
-    {
-
-    }
-
-    /**
-     * Cleans up anything that was created for this test
-     */
-    public void tearDownForEntireClass()
-    {
-
-    }
-
-    /**
-     * Called before each test is run. Use
-     * this to create object that several
-     * test recreate. This way you save
-     * on writing a lot of code.
-     *
-     * @param name - name of the method
-     */
-    public void setUpForTest(String name)
-    {
-
-    }
-
-    /**
-     * Called after each test is run. Use this
-     * to remove any object created before each
-     * test.
-     *
-     * @param name - name of the method
-     */
-    public void tearDownForTest(String name)
-    {
-
-    }
-
     /**
      * Used to check that the number of declared methods in
      * a class has not changed.
@@ -72,7 +31,7 @@ public abstract class AbstractTest extends TestCase
                     return;
                 }
             }
-            fail("There are " + methods.length + " but should be " + methodCount);
+            Assertions.fail("There are " + methods.length + " but should be " + methodCount);
         }
     }
 

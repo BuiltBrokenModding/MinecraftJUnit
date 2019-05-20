@@ -1,5 +1,6 @@
 package com.builtbroken.tests.example;
 
+import com.builtbroken.mc.testing.junit.InitLauncher;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
@@ -9,21 +10,21 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import com.builtbroken.mc.testing.junit.AbstractTest;
-import com.builtbroken.mc.testing.junit.VoltzTestRunner;
 import com.builtbroken.mc.testing.junit.world.FakeWorld;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 /**
  * @author Tyler
  */
-@ExtendWith(VoltzTestRunner.class)
+@ExtendWith(InitLauncher.class)
 public class FurnaceTest extends AbstractTest {
-    World world;
+    static World world;
 
-    @Override
-    public void setUpForEntireClass() {
+    @BeforeAll
+    public static void setUpForEntireClass() {
         world = FakeWorld.newWorld("FurnaceTest");
     }
 
