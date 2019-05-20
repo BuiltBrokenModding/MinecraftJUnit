@@ -7,13 +7,8 @@ import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.launchwrapper.Launch;
 import net.minecraft.launchwrapper.LaunchClassLoader;
-import org.junit.Test;
-import org.junit.runner.Description;
-import org.junit.runner.Result;
-import org.junit.runner.Runner;
-import org.junit.runner.notification.Failure;
-import org.junit.runner.notification.RunNotifier;
-import org.junit.runners.model.InitializationError;
+import org.junit.jupiter.api.extension.ExtensionContext;
+import org.junit.jupiter.api.extension.TestInstancePostProcessor;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -32,25 +27,20 @@ import java.util.Map;
  *
  * @author Darkguardsman
  */
-public class VoltzTestRunner extends Runner
+public class VoltzTestRunner implements TestInstancePostProcessor
 {
+    //https://www.baeldung.com/junit-5-extensions
+
     public static LaunchClassLoader loader;
-    public static FakeDedicatedServer server;
-
-    protected Class<? extends AbstractTest> clazz;
-    protected Object test;
-    protected Class<?> test_class;
-    protected HashMap<Method, Description> testMethods = new HashMap();
-
     protected Method setUpClass;
-    protected Method setUp;
-    protected Method tearDownClass;
-    protected Method tearDown;
 
-    public VoltzTestRunner(Class<? extends AbstractTest> clazz) throws InitializationError, ClassNotFoundException
+
+
+    @Override
+    public void postProcessTestInstance(Object o, ExtensionContext extensionContext) throws Exception
     {
-        this.clazz = clazz;
         init();
+        setUpClass.invoke(0);
     }
 
     public void init()
@@ -103,28 +93,6 @@ public class VoltzTestRunner extends Runner
                     throw new RuntimeException(e);
                 }
             }
-
-            test_class = loader.loadClass(clazz.getName());
-            test = test_class.newInstance();
-
-            setUpClass = getMethod(test_class, "setUpForEntireClass");
-            setUp = getMethod(test_class, "setUpForTest", String.class);
-            tearDownClass = getMethod(test_class, "tearDownForEntireClass");
-            tearDown = getMethod(test_class, "tearDownForTest", String.class);
-
-            for (Method method : test_class.getMethods())
-            {
-                if(!testMethods.containsKey(method))
-                {
-                    String name = method.getName();
-                    Annotation an = method.getAnnotation(Test.class);
-                    if (an != null || name.startsWith("test"))
-                    {
-                        testMethods.put(method, Description.createTestDescription(test_class, method.getName()));
-                    }
-                }
-            }
-
         }
         catch (NoSuchMethodException e)
         {
@@ -150,85 +118,5 @@ public class VoltzTestRunner extends Runner
         {
             e.printStackTrace();
         }
-    }
-
-    @Override
-    public Description getDescription()
-    {
-        Description description = Description.createSuiteDescription(clazz + "-Suit");
-        for (Map.Entry<Method, Description> entry : testMethods.entrySet())
-        {
-            description.addChild(entry.getValue());
-        }
-        return description;
-    }
-
-    @Override
-    public void run(RunNotifier notifier)
-    {
-        try
-        {
-            setUpClass.invoke(test);
-
-            for (Map.Entry<Method, Description> entry : testMethods.entrySet())
-            {
-                Method method = entry.getKey();
-                String name = entry.getKey().getName();
-                notifier.fireTestStarted(entry.getValue());
-                try
-                {
-                    setUp.invoke(test, name);
-                    method.invoke(test);
-                    tearDown.invoke(test, name);
-                }
-                catch (Exception e)
-                {
-                    Throwable cause = e;
-                    if (e instanceof InvocationTargetException)
-                    {
-                        cause = e.getCause();
-                    }
-                    System.out.println("\n\nTest " + name + " has failed");
-                    Failure failure = new Failure(entry.getValue(), cause);
-                    notifier.fireTestFailure(failure);
-                }
-                notifier.fireTestFinished(entry.getValue());
-            }
-
-            //Clean up data for the entire test class
-            tearDownClass.invoke(test);
-
-            // TODO: 9/15/2016 possibly setup a method here to clean the files after they are created to save on HDD space
-        }
-        catch (InvocationTargetException e)
-        {
-            e.printStackTrace();
-        }
-        catch (IllegalAccessException e)
-        {
-            e.printStackTrace();
-        }
-        notifier.fireTestRunFinished(new Result());
-    }
-
-    public static Method getMethod(Class clazz, String name, Class<?>... args)
-    {
-        Method method = null;
-        try
-        {
-            method = clazz.getMethod(name, args);
-        }
-        catch (NoSuchMethodException e)
-        {
-            try
-            {
-                method = clazz.getDeclaredMethod(name, args);
-            }
-            catch (NoSuchMethodException e2)
-            {
-
-            }
-        }
-        return method;
     }
 }

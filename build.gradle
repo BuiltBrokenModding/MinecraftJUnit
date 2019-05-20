@@ -6,60 +6,73 @@ buildscript {
             name = "forge"
             url = "http://files.minecraftforge.net/maven"
         }
+        maven {
+            name = "sonatype"
+            url = "https://oss.sonatype.org/content/repositories/snapshots/"
+        }
     }
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
-        classpath 'org.ajoberstar:grgit:2.1.0'
     }
 }
 
 plugins {
+  //Applies the Build scan plugin so i can upload issues easily and link to gradle devs
+  //id 'com.gradle.build-scan' version '1.4'
   //applies CurseGradle plugin for uploading to CurseForge
-  id "com.matthewprenger.cursegradle" version "1.0.9"
-  id 'net.saliman.cobertura' version '2.2.5'
-  id 'com.github.kt3k.coveralls' version '2.0.1'
+  id "com.matthewprenger.cursegradle" version "1.2.0"
+  // id "net.saliman.cobertura" version "2.5.3"
+  // id "com.github.kt3k.coveralls" version "2.8.2"
   //id "com.github.johnrengelman.shadow" version "1.2.2"
-  //Applies the changelog plugin
-  id "se.bjurr.gitchangelog.git-changelog-gradle-plugin" version "1.50"
+  id "net.franz-becker.gradle-lombok" version "1.3"
+  id 'com.jfrog.bintray' version '1.1'
+  //Applies the changelog pluginid 
+  id "se.bjurr.gitchangelog.git-changelog-gradle-plugin" version "1.55"
+  id "org.ajoberstar.grgit" version "2.1.0"
 }
 
 apply from: 'https://raw.githubusercontent.com/BuiltBrokenModding/BuiltBrokenScripts/1.12.2/index/index.gradle'
-apply plugin: 'com.github.kt3k.coveralls'
-apply plugin: 'jacoco'
-apply plugin: "org.ajoberstar.grgit"
 
-/* dependencies 
+dependencies 
 {
-    compile 'junit:junit:4.11'
-    compile "com.builtbroken.codinglib:CodingLib:0.0.3b26:deobf"
-    testRuntime 'org.slf4j:slf4j-simple:1.7.10'
-}*/
-
-def currentJvm = org.gradle.internal.jvm.Jvm.current()
-
-/*import org.ajoberstar.grgit.Grgit
-
-def gitHash = 'unknown'
-if (new File(projectDir, '.git').exists()) {
-    def repo = Grgit.open(project.file('.'))
-    gitHash = repo.log().find().abbreviatedId
-}*/
-
-jar { 
-    manifest = project.manifest {
-        from sharedManifest
-    }
+    // compile against the JEI API
+    deobfCompile "mezz.jei:jei_${minecraft.version}:4.12.0.216:api"
+   	testImplementation('org.junit.jupiter:junit-jupiter:5.4.2')
 }
 
-def getDate() {
-    def date = new Date()
-    def formattedDate = date.format('yyyyMMddHHmmss')
-    return formattedDate
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+jar {
+     manifest.mainAttributes(
+            "Built-By": System.getProperty('user.name'),
+            "Created-By": project.CurrentJVM,
+            "Implementation-Title": archivesBaseName,
+            "Implementation-Version": project.version,
+            "Git-Hash": project.GitHash)
 }
 
-jacocoTestReport {
-    reports {
-        xml.enabled = true // coveralls plugin depends on xml format report
-        html.enabled = true
+deobfJar {
+     manifest.mainAttributes(
+            "Built-By": System.getProperty('user.name'),
+            "Created-By": project.CurrentJVM,
+            "Implementation-Title": archivesBaseName,
+            "Implementation-Version": project.version,
+            "Git-Hash": project.GitHash)
+}
+
+sourcesJar {
+     manifest.mainAttributes(
+            "Built-By": System.getProperty('user.name'),
+            "Created-By": project.CurrentJVM,
+            "Implementation-Title": archivesBaseName,
+            "Implementation-Version": project.version,
+            "Git-Hash": project.GitHash)
+}
+
+test {
+    useJUnitPlatform()
+    testLogging {
+        events "passed", "skipped", "failed"
     }
 }
