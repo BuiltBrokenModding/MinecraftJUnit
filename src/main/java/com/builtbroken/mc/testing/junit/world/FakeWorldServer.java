@@ -32,7 +32,9 @@ public class FakeWorldServer extends WorldServer
 
     public static FakeWorldServer newWorld(String name)
     {
-        return newWorld(new FakeDedicatedServer(new File(baseFolder, name)), name);
+        FakeDedicatedServer server = new FakeDedicatedServer(new File(baseFolder, name));
+        server.init();
+        return newWorld(server, name);
     }
 
     public static FakeWorldServer newWorld(MinecraftServer server, String name)
@@ -40,6 +42,7 @@ public class FakeWorldServer extends WorldServer
         WorldSettings settings = new WorldSettings(0, GameType.SURVIVAL, false, false, WorldType.FLAT);
         WorldInfo worldInfo = new WorldInfo(settings, name);
         FakeWorldSaveHandler handler = new FakeWorldSaveHandler(worldInfo);
+
         if (DimensionManager.getWorld(0) == null)
         {
             WorldSettings settings2 = new WorldSettings(0, GameType.SURVIVAL, false, false, WorldType.FLAT);

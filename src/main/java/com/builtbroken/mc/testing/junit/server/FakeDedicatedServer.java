@@ -82,7 +82,7 @@ public class FakeDedicatedServer extends DedicatedServer
     }
 
     @Override
-    public boolean init() throws IOException
+    public boolean init()
     {
         final PropertyManager settings = new PropertyManager(new File("server.properties"))
         {
