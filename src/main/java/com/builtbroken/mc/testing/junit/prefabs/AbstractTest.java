@@ -1,4 +1,4 @@
-package com.builtbroken.mc.testing.junit;
+package com.builtbroken.mc.testing.junit.prefabs;
 
 import org.junit.jupiter.api.Assertions;
 

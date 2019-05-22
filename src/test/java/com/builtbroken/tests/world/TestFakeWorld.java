@@ -1,7 +1,9 @@
 package com.builtbroken.tests.world;
 
+import com.builtbroken.mc.testing.junit.prefabs.WorldTest;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockChest;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Bootstrap;
 import net.minecraft.tileentity.TileEntity;
@@ -9,37 +11,16 @@ import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-
-import com.builtbroken.mc.testing.junit.AbstractTest;
-import com.builtbroken.mc.testing.junit.InitLauncher;
 import com.builtbroken.mc.testing.junit.world.FakeWorld;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 
 /**
  * JUnit test for {@link FakeWorld}
  * Created by robert on 11/13/2014.
  */
-public class FakeWorldTest extends AbstractTest
+public class TestFakeWorld extends WorldTest
 {
-
-    static World world = null;
-
-    public FakeWorldTest()
-    {
-
-    }
-
-    @BeforeAll
-    public static void setUpForEntireClass()
-    {
-        Bootstrap.register();
-        world = FakeWorld.newWorld("FakeWorldTest");
-    }
-
     @Test
     public void testBlockRegistry()
     {
@@ -70,37 +51,30 @@ public class FakeWorldTest extends AbstractTest
     @Test
     public void testBlockPlacement()
     {
-        if (Blocks.SAND != null)
-        {
-            BlockPos pos = new BlockPos(0, 0, 0);
-            world.setBlockState(pos, Blocks.SAND.getDefaultState());
-            Block block = world.getBlockState(pos).getBlock();
-            Assertions.assertEquals(Blocks.SAND, block, "World.getBlockState() failed.");
-        }
-        else
-        {
-            Assertions.fail("Blocks.sand is null.");
-        }
+        Assertions.assertNotNull(Blocks.SAND, "Blocks.sand is null.");
+
+        final BlockPos pos = new BlockPos(0, 0, 0);
+        world.setBlockState(pos, Blocks.SAND.getDefaultState());
+
+        IBlockState blockState = world.getBlockState(pos);
+        Block block = blockState.getBlock();
+        Assertions.assertEquals(Blocks.SAND, block, "World.getBlockState() failed.");
     }
 
     @Test
     public void testTilePlacement()
     {
-        if (Blocks.CHEST != null)
+        Assertions.assertNotNull(Blocks.CHEST, "Blocks.sand is null.");
+
+        BlockPos pos = new BlockPos(0, 0, 0);
+        world.setBlockState(pos, Blocks.CHEST.getDefaultState().withProperty(BlockChest.FACING, EnumFacing.NORTH));
+        Block block = world.getBlockState(pos).getBlock();
+        Assertions.assertEquals(Blocks.CHEST, block, "World.getBlockState() failed ");
+        if (!(world.getTileEntity(pos) instanceof TileEntityChest))
         {
-            BlockPos pos = new BlockPos(0, 0, 0);
-            world.setBlockState(pos, Blocks.CHEST.getDefaultState().withProperty(BlockChest.FACING, EnumFacing.NORTH));
-            Block block = world.getBlockState(pos).getBlock();
-            Assertions.assertEquals(Blocks.CHEST, block, "World.getBlockState() failed ");
-            if (!(world.getTileEntity(pos) instanceof TileEntityChest))
-            {
-                Assertions.fail("world.getTileEntity() returned the wrong tile\n" + world.getTileEntity(pos) + "  should equal TileEntityChest.");
-            }
+            Assertions.fail("world.getTileEntity() returned the wrong tile\n" + world.getTileEntity(pos) + "  should equal TileEntityChest.");
         }
-        else
-        {
-            Assertions.fail("Blocks.chest is null.");
-        }
+
     }
 
     @Test
