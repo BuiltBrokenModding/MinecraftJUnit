@@ -4,11 +4,12 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.PlayerInteractionManager;
 import net.minecraft.stats.StatBase;
-import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 
 import com.mojang.authlib.GameProfile;
+
+import java.util.UUID;
 
 /**
  * Version of the player designed for JUnit testing. Needs a server instance, server world, and profile data to be created.
@@ -24,6 +25,8 @@ public class TestPlayer extends EntityPlayerMP
     /** Toggle to throw errors when guis are opened, useful for checking if guis are opened correctly... or at all. */
     public boolean throwErrorsWhenOpeningGUI = false;
 
+    private static GameProfile PROFILE_DEFAULT = new GameProfile(UUID.fromString("41C82C87-7AfB-4024-BA57-13D2C99CAE76"), "[UNIT_TESTER]");
+
     /**
      * Only constructor for this class
      *
@@ -34,6 +37,11 @@ public class TestPlayer extends EntityPlayerMP
     public TestPlayer(MinecraftServer server, WorldServer world, GameProfile profile)
     {
         super(server, world, profile, new PlayerInteractionManager(world));
+    }
+
+    public TestPlayer(MinecraftServer server, WorldServer world)
+    {
+        super(server, world, PROFILE_DEFAULT, new PlayerInteractionManager(world));
     }
 
     @Override

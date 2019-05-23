@@ -1,5 +1,6 @@
 package com.builtbroken.mc.testing.junit.prefabs;
 
+import net.minecraft.util.math.BlockPos;
 import org.junit.jupiter.api.Assertions;
 
 import java.lang.reflect.Method;
@@ -11,6 +12,8 @@ import java.lang.reflect.Method;
  */
 public abstract class AbstractTest
 {
+    public static BlockPos ZERO_POS = new BlockPos(0, 0, 0);
+
     /**
      * Used to check that the number of declared methods in
      * a class has not changed.

@@ -1,8 +1,10 @@
 package com.builtbroken.mc.testing.junit.world;
 
 import com.builtbroken.mc.testing.junit.server.FakeDedicatedServer;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.profiler.Profiler;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.DimensionType;
 import net.minecraft.world.GameType;
 import net.minecraft.world.WorldServer;
@@ -11,8 +13,10 @@ import net.minecraft.world.WorldType;
 import net.minecraft.world.storage.WorldInfo;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.EnumHelper;
+import org.junit.jupiter.api.Assertions;
 
 import java.io.File;
+import java.util.function.BiConsumer;
 
 /**
  * Version of WorldServer for unit testing
@@ -20,8 +24,11 @@ import java.io.File;
  */
 public class FakeWorldServer extends WorldServer
 {
+
     public static File baseFolder = new File(new File("."), "out/test/FakeWorldWithServer/");
     File rootFolder;
+
+    public BiConsumer<BlockPos, IBlockState> setBlockCallback;
 
     public FakeWorldServer(WorldInfo info, MinecraftServer server, File file, FakeWorldSaveHandler handler, int dimID, WorldSettings settings)
     {
@@ -30,33 +37,50 @@ public class FakeWorldServer extends WorldServer
         initialize(settings);
     }
 
-    public static FakeWorldServer newWorld(String name)
+    public static FakeDedicatedServer createServer(String name)
     {
         FakeDedicatedServer server = new FakeDedicatedServer(new File(baseFolder, name));
         server.init();
-        return newWorld(server, name);
+        return server;
     }
 
-    public static FakeWorldServer newWorld(MinecraftServer server, String name)
+    public static FakeWorldServer newWorld()
+    {
+        return newWorld(createServer("TestServer"), 0, "OVERWORLD");
+    }
+
+    public static FakeWorldServer newWorld(String name)
+    {
+        return newWorld(createServer(name), 0, name);
+    }
+
+    public static FakeWorldServer newWorld(MinecraftServer server, int dim, String name)
     {
         WorldSettings settings = new WorldSettings(0, GameType.SURVIVAL, false, false, WorldType.FLAT);
         WorldInfo worldInfo = new WorldInfo(settings, name);
         FakeWorldSaveHandler handler = new FakeWorldSaveHandler(worldInfo);
 
-        if (DimensionManager.getWorld(0) == null)
-        {
-            WorldSettings settings2 = new WorldSettings(0, GameType.SURVIVAL, false, false, WorldType.FLAT);
-            WorldInfo worldInfo2 = new WorldInfo(settings, name);
-            FakeWorldSaveHandler handler2 = new FakeWorldSaveHandler(worldInfo2);
+        //Check that there is no dim for world
+        Assertions.assertNull(DimensionManager.getWorld(dim));
 
-            DimensionManager.setWorld(0, new FakeWorldServer(new WorldInfo(settings2, "overworld"), server, new File(baseFolder, name), handler2, 0, settings2), server);
-        }
-        if (!DimensionManager.isDimensionRegistered(10))
+        //Create world
+        FakeWorldServer world = new FakeWorldServer(worldInfo, server,  new File(baseFolder, name), handler, dim, settings);
+
+        //Register world
+        DimensionManager.setWorld(0, world, server);
+
+        //Return
+        return world;
+    }
+
+    @Override
+    public boolean setBlockState(BlockPos pos, IBlockState newState, int flags)
+    {
+        if (setBlockCallback != null)
         {
-            DimensionManager.registerDimension(10, DimensionType.OVERWORLD);
-            DimensionManager.createProviderFor(10);
+            setBlockCallback.accept(pos, newState);
         }
-        return new FakeWorldServer(new WorldInfo(settings, name), server, new File(baseFolder, name), handler, 10, settings);
+        return super.setBlockState(pos, newState, flags);
     }
 
     @Override

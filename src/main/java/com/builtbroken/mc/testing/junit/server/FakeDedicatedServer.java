@@ -76,11 +76,6 @@ public class FakeDedicatedServer extends DedicatedServer
         this.setBuildLimit(256);
     }
 
-    public DedicatedPlayerList getPlayerList()
-    {
-        return new DedicatedPlayerList(this);
-    }
-
     @Override
     public boolean init()
     {
