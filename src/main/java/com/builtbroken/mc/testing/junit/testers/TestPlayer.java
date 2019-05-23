@@ -106,8 +106,12 @@ public class TestPlayer extends EntityPlayerMP
     public void reset()
     {
         this.setLocationAndAngles(0, 0, 0, 0, 0);
-        /*this.inventory.mainInventory = new ItemStack[36];
-        this.inventory.armorInventory = new ItemStack[4];*/
+        for (EntityEquipmentSlot slotIn : EntityEquipmentSlot.values())
+        {
+            this.setItemStackToSlot (slotIn, ItemStack.EMPTY);
+        }
+        inventory.clear();
         this.inventory.currentItem = 0;
+        setGameType(GameType.NOT_SET);
     }
 }
