@@ -1,9 +1,14 @@
 package com.builtbroken.mc.testing.junit.testers;
 
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.item.ItemStack;
+import net.minecraft.network.play.server.SPacketChangeGameState;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.PlayerInteractionManager;
 import net.minecraft.stats.StatBase;
+import net.minecraft.util.EnumHand;
+import net.minecraft.world.GameType;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 
@@ -16,13 +21,22 @@ import java.util.UUID;
  */
 public class TestPlayer extends EntityPlayerMP
 {
-    /** Toggle to print received chat messages to console. */
+
+    /**
+     * Toggle to print received chat messages to console.
+     */
     public boolean outputChat = false;
-    /** Toggle to throw errors when chat messages are received, useful for checking if chat messages are outputted correctly... or at all. */
+    /**
+     * Toggle to throw errors when chat messages are received, useful for checking if chat messages are outputted correctly... or at all.
+     */
     public boolean throwErrorsWhenReceivingChat = false;
-    /** Toggle to throw errors when stats are received, useful for checking if stats are received correctly... or at all. */
+    /**
+     * Toggle to throw errors when stats are received, useful for checking if stats are received correctly... or at all.
+     */
     public boolean throwErrorsWhenReceivingStats = false;
-    /** Toggle to throw errors when guis are opened, useful for checking if guis are opened correctly... or at all. */
+    /**
+     * Toggle to throw errors when guis are opened, useful for checking if guis are opened correctly... or at all.
+     */
     public boolean throwErrorsWhenOpeningGUI = false;
 
     private static GameProfile PROFILE_DEFAULT = new GameProfile(UUID.fromString("41C82C87-7AfB-4024-BA57-13D2C99CAE76"), "[UNIT_TESTER]");
@@ -60,6 +74,25 @@ public class TestPlayer extends EntityPlayerMP
         {
             throw new RuntimeException("mod:" + mod + " id:" + modGuiId + " dim:" + world.provider.getDimension() + " " + x + "x " + y + "y " + z + "z");
         }
+    }
+
+    @Override
+    public void setGameType(GameType gameType)
+    {
+        this.interactionManager.setGameType(gameType);
+
+        if (gameType == GameType.SPECTATOR)
+        {
+            this.spawnShoulderEntities();
+            this.dismountRidingEntity();
+        }
+        else
+        {
+            this.setSpectatingEntity(this);
+        }
+
+        this.sendPlayerAbilities();
+        this.markPotionsDirty();
     }
 
     /**
