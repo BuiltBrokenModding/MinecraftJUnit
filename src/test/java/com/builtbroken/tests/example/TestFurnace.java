@@ -16,6 +16,7 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 
 import com.builtbroken.mc.testing.junit.prefabs.AbstractTest;
+import net.minecraft.world.GameType;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -161,6 +162,7 @@ public class TestFurnace extends AbstractTest
 
         //Setup player
         player.setPosition(0, 1, 2);
+        player.setGameType(GameType.SURVIVAL);
         player.setHeldItem(EnumHand.MAIN_HAND, new ItemStack(Blocks.FURNACE));
 
         //Place block through player
@@ -168,6 +170,15 @@ public class TestFurnace extends AbstractTest
                 player.getHeldItem(EnumHand.MAIN_HAND), EnumHand.MAIN_HAND,
                 ZERO_POS, EnumFacing.UP, 0.5f, 0f, 0.5f);
 
+        //Validate success state, keep in mind there are more than 1 reason success happened
         Assertions.assertEquals(EnumActionResult.SUCCESS, actionResult);
+
+        //Check we consumed the item, closer to a check that we placed but not yet there
+        Assertions.assertTrue(player.getHeldItem(EnumHand.MAIN_HAND).isEmpty());
+
+        //Check block
+        final IBlockState state = world.getBlockState(ZERO_POS.up()); //Block should be 1 above dirt
+        final Block block = state.getBlock();
+        Assertions.assertEquals(block, Blocks.FURNACE, "Should be a furnace.");
     }
 }
