@@ -13,6 +13,7 @@ buildscript {
     }
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
+		classpath ("org.junit.platform:junit-platform-gradle-plugin:1.0.0-M4")
     }
 }
 
@@ -32,13 +33,18 @@ plugins {
 }
 
 apply from: 'https://raw.githubusercontent.com/BuiltBrokenModding/BuiltBrokenScripts/1.12.2/index/index.gradle'
+apply plugin: 'org.junit.platform.gradle.plugin'
 
 dependencies 
 {
-    // compile against the JEI API
-    // deobfCompile "mezz.jei:jei_${minecraft.version}:4.12.0.216:api"
-	testImplementation 'org.junit.jupiter:junit-jupiter-api:5.4.2'
-	testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.4.2'
+   	   testCompile("junit:junit:4.12")
+       testRuntime("org.junit.vintage:junit-vintage-engine:4.12.0-M4")
+
+       testCompile("org.junit.jupiter:junit-jupiter-api:5.0.0-M4")
+       testRuntime("org.junit.jupiter:junit-jupiter-engine:5.0.0-M4")
+
+       // Enable use of the JUnitPlatform Runner within the IDE
+       testCompile("org.junit.platform:junit-platform-runner:1.0.0-M4")
 }
 
 sourceCompatibility = 1.8
@@ -69,4 +75,8 @@ sourcesJar {
             "Implementation-Title": archivesBaseName,
             "Implementation-Version": project.version,
             "Git-Hash": project.GitHash)
+}
+
+junitPlatform {
+    details 'tree'
 }
