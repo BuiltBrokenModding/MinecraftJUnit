@@ -70,10 +70,3 @@ sourcesJar {
             "Implementation-Version": project.version,
             "Git-Hash": project.GitHash)
 }
-
-test {
-    useJUnitPlatform()
-    testLogging {
-        events "passed", "skipped", "failed"
-    }
-}
