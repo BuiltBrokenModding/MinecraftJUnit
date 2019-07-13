@@ -7,24 +7,18 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Items;
-import net.minecraft.network.rcon.RConThreadMain;
-import net.minecraft.network.rcon.RConThreadQuery;
 import net.minecraft.profiler.Snooper;
 import net.minecraft.server.dedicated.DedicatedPlayerList;
 import net.minecraft.server.dedicated.DedicatedServer;
 import net.minecraft.server.dedicated.PropertyManager;
-import net.minecraft.server.dedicated.ServerHangWatchdog;
 import net.minecraft.server.management.PlayerProfileCache;
 import net.minecraft.server.management.PreYggdrasilConverter;
-import net.minecraft.tileentity.TileEntitySkull;
-import net.minecraft.util.CryptManager;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.datafix.DataFixesManager;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.GameType;
-import net.minecraft.world.WorldSettings;
+import net.minecraft.world.WorldServer;
 import net.minecraft.world.WorldType;
-import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.logging.log4j.LogManager;
@@ -33,9 +27,13 @@ import org.apache.logging.log4j.Logger;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.net.InetAddress;
 import java.net.Proxy;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Random;
+import java.util.Set;
+import java.util.UUID;
 
 @SideOnly(Side.SERVER)
 public class FakeDedicatedServer extends DedicatedServer
@@ -95,7 +93,8 @@ public class FakeDedicatedServer extends DedicatedServer
             Field field = DedicatedServer.class.getDeclaredField("settings");
             field.setAccessible(true);
             field.set(this, settings);
-        } catch (Exception e)
+        }
+        catch (Exception e)
         {
             throw new RuntimeException(e);
         }
@@ -164,15 +163,15 @@ public class FakeDedicatedServer extends DedicatedServer
 
         //if (!this.isServerInOnlineMode())
         //{
-            //LOGGER.warn("**** SERVER IS RUNNING IN OFFLINE/INSECURE MODE!");
-            //LOGGER.warn("The server will make no attempt to authenticate usernames. Beware.");
-            //LOGGER.warn("While this makes the game possible to play without internet access, it also opens up the ability for hackers to connect with any username they choose.");
-            //LOGGER.warn("To change this, set \"online-mode\" to \"true\" in the server.properties file.");
+        //LOGGER.warn("**** SERVER IS RUNNING IN OFFLINE/INSECURE MODE!");
+        //LOGGER.warn("The server will make no attempt to authenticate usernames. Beware.");
+        //LOGGER.warn("While this makes the game possible to play without internet access, it also opens up the ability for hackers to connect with any username they choose.");
+        //LOGGER.warn("To change this, set \"online-mode\" to \"true\" in the server.properties file.");
         //}
 
         //if (this.convertFiles())
         //{
-            //this.getPlayerProfileCache().save();
+        //this.getPlayerProfileCache().save();
         //}
 
         if (!PreYggdrasilConverter.tryConvert(settings))
@@ -205,7 +204,8 @@ public class FakeDedicatedServer extends DedicatedServer
                     {
                         k = l;
                     }
-                } catch (NumberFormatException var16)
+                }
+                catch (NumberFormatException var16)
                 {
                     k = (long) s.hashCode();
                 }
@@ -379,5 +379,13 @@ public class FakeDedicatedServer extends DedicatedServer
             ServerCommand servercommand = (ServerCommand) this.pendingCommandList.remove(0);
             this.getCommandManager().executeCommand(servercommand.sender, servercommand.command);
         }*/
+    }
+
+    public void dispose()
+    {
+        for (WorldServer world : this.worlds)
+        {
+            net.minecraftforge.common.DimensionManager.setWorld(world.provider.getDimension(), null, this);
+        }
     }
 }

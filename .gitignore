@@ -34,3 +34,5 @@ whitelist.json
 \.DS_Store
 
 classes/
+
+server\.properties

@@ -1,5 +1,6 @@
 package com.builtbroken.tests.example;
 
+import com.builtbroken.mc.testing.junit.prefabs.AbstractTest;
 import com.builtbroken.mc.testing.junit.server.FakeDedicatedServer;
 import com.builtbroken.mc.testing.junit.testers.TestPlayer;
 import com.builtbroken.mc.testing.junit.world.FakeWorldServer;
@@ -14,9 +15,8 @@ import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
-
-import com.builtbroken.mc.testing.junit.prefabs.AbstractTest;
 import net.minecraft.world.GameType;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -61,6 +61,12 @@ public class TestFurnace extends AbstractTest
                 Assertions.fail("Placed block outside map area: " + pos);
             }
         };
+    }
+
+    @AfterAll
+    public static void afterAllTests()
+    {
+        server.dispose();
     }
 
     @BeforeEach

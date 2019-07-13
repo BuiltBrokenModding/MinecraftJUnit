@@ -1,7 +1,9 @@
 package com.builtbroken.tests.world;
 
+import com.builtbroken.mc.testing.junit.server.FakeDedicatedServer;
 import com.builtbroken.mc.testing.junit.world.FakeWorldServer;
 import net.minecraft.init.Bootstrap;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 
 /**
@@ -10,10 +12,19 @@ import org.junit.jupiter.api.BeforeAll;
  */
 public class TestFakeWorldServer extends TestFakeWorld
 {
+    static FakeDedicatedServer server;
+
     @BeforeAll
     public static void setUpForEntireClass()
     {
         Bootstrap.register();
-        world = FakeWorldServer.newWorld("FakeWorldServerTest");
+        server = FakeWorldServer.createServer("FakeWorldServerTest");
+        world = FakeWorldServer.newWorld(server, 0, "FakeWorldServerTest");
+    }
+
+    @AfterAll
+    public static void afterAllTests()
+    {
+        server.dispose();
     }
 }

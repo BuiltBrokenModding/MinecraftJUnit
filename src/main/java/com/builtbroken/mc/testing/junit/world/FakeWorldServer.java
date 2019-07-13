@@ -5,14 +5,12 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.profiler.Profiler;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.DimensionType;
 import net.minecraft.world.GameType;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.WorldSettings;
 import net.minecraft.world.WorldType;
 import net.minecraft.world.storage.WorldInfo;
 import net.minecraftforge.common.DimensionManager;
-import net.minecraftforge.common.util.EnumHelper;
 import org.junit.jupiter.api.Assertions;
 
 import java.io.File;
@@ -88,4 +86,4 @@ public class FakeWorldServer extends WorldServer
     {
         return new File(rootFolder, "save");
     }
-}
+    }
