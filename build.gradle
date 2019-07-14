@@ -15,7 +15,7 @@ compileJava {
 }
 
 //Setup version
-version = project.version + "-" + version
+version = project.minecraft.version + "-" + version
 if (project.hasProperty("bambooBuildNumber"))
     version += "b" + project.bambooBuildNumber
 
