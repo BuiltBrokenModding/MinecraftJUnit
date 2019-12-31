@@ -14,11 +14,6 @@ compileJava {
     sourceCompatibility = targetCompatibility = '1.8'
 }
 
-//Setup version
-version = project.minecraft.version + "-" + version
-if (project.hasProperty("bambooBuildNumber"))
-    version += "b" + project.bambooBuildNumber
-
 minecraft {
     version = "1.12.2-14.23.5.2838"
     runDir = "run"
