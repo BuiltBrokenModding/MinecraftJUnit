@@ -36,7 +36,7 @@ jobs:
         prerelease: false
     - name: Get the version
       id: get_version
-      run: echo ::set-output name=RELEASE_VERSION::${GITHUB_REF/refs\/tags\//}
+      run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3)
     - name: Upload Jar
       id: upload-release-jar
       uses: actions/upload-release-asset@v1.0.1
@@ -44,8 +44,8 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }} 
-        asset_path: ./build/libs/MinecraftJunit-${{ github.ref }}.jar
-        asset_name: MinecraftJunit-${{ github.ref }}.jar
+        asset_path: ./build/libs/MinecraftJunit-${{ steps.get_version.outputs.VERSION }}.jar
+        asset_name: MinecraftJunit-${{ steps.get_version.outputs.VERSION }}.jar
         asset_content_type: application/zip
     - name: Upload Sources
       id: upload-release-docs
@@ -54,6 +54,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }} 
-        asset_path: ./build/libs/MinecraftJunit-${{ env.RELEASE_VERSION }}-sources.jar
-        asset_name: MinecraftJunit-${{ env.RELEASE_VERSION }}-sources.jar
+        asset_path: ./build/libs/MinecraftJunit-${{ steps.get_version.outputs.VERSION }}-sources.jar
+        asset_name: MinecraftJunit-${{ steps.get_version.outputs.VERSION }}-sources.jar
         asset_content_type: application/zip
