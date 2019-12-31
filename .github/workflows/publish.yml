@@ -44,8 +44,8 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }} 
-        asset_path: ./build/libs/MinecraftJunit-${{ steps.get_version.outputs.VERSION }}.jar
-        asset_name: MinecraftJunit-${{ steps.get_version.outputs.VERSION }}.jar
+        asset_path: ./build/libs/MinecraftJUnit-${{ steps.get_version.outputs.VERSION }}.jar
+        asset_name: MinecraftJUnit-${{ steps.get_version.outputs.VERSION }}.jar
         asset_content_type: application/zip
     - name: Upload Sources
       id: upload-release-docs
@@ -54,6 +54,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }} 
-        asset_path: ./build/libs/MinecraftJunit-${{ steps.get_version.outputs.VERSION }}-sources.jar
-        asset_name: MinecraftJunit-${{ steps.get_version.outputs.VERSION }}-sources.jar
+        asset_path: ./build/libs/MinecraftJUnit-${{ steps.get_version.outputs.VERSION }}-sources.jar
+        asset_name: MinecraftJUnit-${{ steps.get_version.outputs.VERSION }}-sources.jar
         asset_content_type: application/zip
