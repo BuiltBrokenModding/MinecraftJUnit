@@ -1,27 +1,29 @@
 package com.builtbroken.tests.example;
 
+import com.builtbroken.mc.testing.junit.TestManager;
 import com.builtbroken.mc.testing.junit.prefabs.AbstractTest;
-import com.builtbroken.mc.testing.junit.server.FakeDedicatedServer;
 import com.builtbroken.mc.testing.junit.testers.TestPlayer;
 import com.builtbroken.mc.testing.junit.world.FakeWorldServer;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
-import net.minecraft.init.Bootstrap;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.GameType;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+
+import java.util.stream.Stream;
 
 /**
  * Example test showing how to unit test the minecraft furnace
@@ -30,43 +32,18 @@ import org.junit.jupiter.api.Test;
  */
 public class TestFurnace extends AbstractTest
 {
-
-    static FakeWorldServer world;
-    static TestPlayer player;
-    static FakeDedicatedServer server;
+    static TestManager testManager = new TestManager("TestFurnace");
 
     @BeforeAll
     public static void beforeAllTests()
     {
-        //Setup game
-        Bootstrap.register();
-
-        //Create server for world for player
-        server = FakeWorldServer.createServer("TestFurnace");
-        world = FakeWorldServer.newWorld(server, 0, "TestFurnace");
-        world.init(); //Must run after world creation in order to create a player without crashing
-
-        player = new TestPlayer(server, world);
-
-
-        //Limits block placements to inside our clean area so we can ensure each test case is valid
-        world.setBlockCallback = (pos, state) ->
-        {
-            if (pos.getX() < 0 || pos.getX() > 15 || pos.getZ() < 0 || pos.getZ() > 15)
-            {
-                Assertions.fail("Placed block outside cleanup area: " + pos);
-            }
-            else if (pos.getY() < 0 || pos.getY() >= world.getHeight())
-            {
-                Assertions.fail("Placed block outside map area: " + pos);
-            }
-        };
+        testManager.lockToCenterChunk();
     }
 
     @AfterAll
     public static void afterAllTests()
     {
-        server.dispose();
+        testManager.tearDownTest();
     }
 
     @BeforeEach
@@ -78,26 +55,16 @@ public class TestFurnace extends AbstractTest
     @AfterEach
     public void afterEachTest()
     {
-        //Clear chunk to make sure each test is valid
-        final BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos(0, 0, 0);
-        for (int x = 0; x < 16; x++)
-        {
-            for (int z = 0; z < 16; z++)
-            {
-                for (int y = 0; y < 256; y++)
-                {
-                    pos.setPos(x, y, z);
-                    world.setBlockToAir(pos);
-                }
-            }
-        }
-
-        //Reset player
-        player.reset();
+        testManager.cleanupBetweenTests();
     }
 
-    @Test
-    public void testSetBlock()
+    private static Stream<Arguments> provideWorldAndPlayer() {
+        return Stream.of(Arguments.of(testManager.getWorld(), testManager.getPlayer()));
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideWorldAndPlayer")
+    public void testSetBlock(FakeWorldServer world, TestPlayer player)
     {
         //Set
         world.setBlockState(ZERO_POS, Blocks.FURNACE.getDefaultState());
@@ -112,8 +79,9 @@ public class TestFurnace extends AbstractTest
         Assertions.assertSame(tile.getClass(), TileEntityFurnace.class, "World.getTileEntity() should have returned a furnace tile. Actually got " + tile);
     }
 
-    @Test
-    public void testRemoveBlock()
+    @ParameterizedTest
+    @MethodSource("provideWorldAndPlayer")
+    public void testRemoveBlock(FakeWorldServer world, TestPlayer player)
     {
         //Goal of this test is to ensure our block cleans up properly when set to air
         //  in rare cases dirty tiles can remain due to bad setups
@@ -136,8 +104,9 @@ public class TestFurnace extends AbstractTest
         Assertions.assertNull(world.getTileEntity(ZERO_POS), "Tile should have been removed");
     }
 
-    @Test
-    public void testReplaceBlock()
+    @ParameterizedTest
+    @MethodSource("provideWorldAndPlayer")
+    public void testReplaceBlock(FakeWorldServer world, TestPlayer player)
     {
         //Goal of this test is to ensure our block cleans up properly when set to air
         //  in rare cases dirty tiles can remain due to bad setups
@@ -160,8 +129,9 @@ public class TestFurnace extends AbstractTest
         Assertions.assertNull(world.getTileEntity(ZERO_POS), "Tile should have been removed");
     }
 
-    @Test
-    public void testPlacement()
+    @ParameterizedTest
+    @MethodSource("provideWorldAndPlayer")
+    public void testPlacement(FakeWorldServer world, TestPlayer player)
     {
         //Place something to click
         world.setBlockState(ZERO_POS, Blocks.DIRT.getDefaultState());

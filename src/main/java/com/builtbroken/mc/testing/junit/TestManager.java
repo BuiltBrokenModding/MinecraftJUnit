@@ -1,0 +1,110 @@
+package com.builtbroken.mc.testing.junit;
+
+import com.builtbroken.mc.testing.junit.server.FakeDedicatedServer;
+import com.builtbroken.mc.testing.junit.testers.TestPlayer;
+import com.builtbroken.mc.testing.junit.world.FakeWorldServer;
+import net.minecraft.init.Bootstrap;
+import net.minecraft.util.math.BlockPos;
+import org.junit.jupiter.api.Assertions;
+
+/**
+ * Created by Dark(DarkGuardsman, Robert) on 12/31/2019.
+ */
+public class TestManager
+{
+    private FakeWorldServer world;
+    private TestPlayer player;
+    private FakeDedicatedServer server;
+
+    private final String name;
+
+    public TestManager(String name)
+    {
+        this.name = name;
+    }
+
+    public FakeDedicatedServer getServer()
+    {
+        if (server == null)
+        {
+            Bootstrap.register();
+            server = FakeWorldServer.createServer(name);
+        }
+        return server;
+    }
+
+    public FakeWorldServer getWorld()
+    {
+        if (world == null)
+        {
+            world = FakeWorldServer.newWorld(getServer(), 0, name);
+            world.init();
+        }
+        return world;
+    }
+
+    public TestPlayer getPlayer()
+    {
+        if (player == null)
+        {
+            player = new TestPlayer(getServer(), getWorld());
+        }
+        return player;
+    }
+
+    /**
+     * Destroys everything at the end of the test
+     */
+    public void tearDownTest()
+    {
+        getServer().dispose();
+    }
+
+    /**
+     * Cleans up data between tests
+     */
+    public void cleanupBetweenTests()
+    {
+        if (player != null)
+        {
+            player.reset();
+        }
+
+        if (world != null)
+        {
+            clearCenterChunk();
+        }
+    }
+
+    public void clearCenterChunk()
+    {
+        //Clear chunk to make sure each test is valid
+        final BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos(0, 0, 0);
+        for (int x = 0; x < 16; x++)
+        {
+            for (int z = 0; z < 16; z++)
+            {
+                for (int y = 0; y < 256; y++)
+                {
+                    pos.setPos(x, y, z);
+                    getWorld().setBlockToAir(pos);
+                }
+            }
+        }
+    }
+
+    public void lockToCenterChunk() {
+        //Limits block placements to inside our clean area so we can ensure each test case is valid
+        getWorld().setBlockCallback = (pos, state) ->
+        {
+            if (pos.getX() < 0 || pos.getX() > 15 || pos.getZ() < 0 || pos.getZ() > 15)
+            {
+                Assertions.fail("Placed block outside cleanup area: " + pos);
+            }
+            else if (pos.getY() < 0 || pos.getY() >= getWorld().getHeight())
+            {
+                Assertions.fail("Placed block outside map area: " + pos);
+            }
+        };
+    }
+}
