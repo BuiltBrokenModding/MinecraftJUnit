@@ -34,6 +34,8 @@ jobs:
           - Second Change
         draft: true
         prerelease: false
+    - name: Set version to env
+      run: echo ::set-env name=RELEASE_VERSION::$(echo ${GITHUB_REF:10})
     - name: Upload Jar
       id: upload-release-jar
       uses: actions/upload-release-asset@v1.0.1
@@ -51,6 +53,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }} 
-        asset_path: ./build/libs/MinecraftJunit-${{GITHUB_REF#refs/tags/}}-sources.jar
-        asset_name: MinecraftJunit-${{GITHUB_REF#refs/tags/}}-sources.jar
+        asset_path: ./build/libs/MinecraftJunit-${{ env.RELEASE_VERSION }}-sources.jar
+        asset_name: MinecraftJunit-${{ env.RELEASE_VERSION }}-sources.jar
         asset_content_type: application/zip
