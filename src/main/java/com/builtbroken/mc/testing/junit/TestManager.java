@@ -5,6 +5,7 @@ import com.builtbroken.mc.testing.junit.testers.TestPlayer;
 import com.builtbroken.mc.testing.junit.world.FakeWorldServer;
 import net.minecraft.init.Bootstrap;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.common.DimensionManager;
 import org.junit.jupiter.api.Assertions;
 
 /**
@@ -72,7 +73,8 @@ public class TestManager
 
         if (world != null)
         {
-            clearCenterChunk();
+            DimensionManager.setWorld(0, null, getServer());
+            world = null;
         }
     }
 
