@@ -25,11 +25,10 @@ public final class ReflectionHelpers
     public static void setStaticField(Class clss, String fieldName, Object value) {
         try
         {
-            Field field = removeFinal(clss.getDeclaredField(fieldName));
-            field.set(null, value);
+            removeFinal(clss.getDeclaredField(fieldName)).set(null, value);
         } catch (Exception e)
         {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Failed to set static final field [" + fieldName + "] on class [" + clss + "]", e);
         }
     }
 
