@@ -20,8 +20,9 @@ public class TestFakeWorldServer extends TestFakeWorld
     public static void setUpForEntireClass()
     {
         Bootstrap.register();
+        FakeDedicatedServer.exceptionHandler = Assertions::fail;
+
         server = FakeWorldServer.createServer("FakeWorldServerTest");
-        server.exceptionHandler = Assertions::fail;
         world = FakeWorldServer.newWorld(server, 0, "FakeWorldServerTest");
     }
 

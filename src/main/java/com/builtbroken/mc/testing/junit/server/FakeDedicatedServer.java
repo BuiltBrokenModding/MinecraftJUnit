@@ -40,6 +40,7 @@ import java.util.function.Consumer;
 @SideOnly(Side.SERVER)
 public class FakeDedicatedServer extends DedicatedServer
 {
+    public static Consumer<String> exceptionHandler = (string) -> new RuntimeException(string);
 
     private static final Logger logger = LogManager.getLogger();
     public final List pendingCommandList = Collections.synchronizedList(new ArrayList());
@@ -50,7 +51,7 @@ public class FakeDedicatedServer extends DedicatedServer
 
     private static final File CACHE = new File("usercache.json");
 
-    public Consumer<String> exceptionHandler = (string) -> new RuntimeException(string);
+
 
     public FakeDedicatedServer(File file)
     {

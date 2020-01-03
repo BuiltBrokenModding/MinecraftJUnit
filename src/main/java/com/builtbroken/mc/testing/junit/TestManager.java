@@ -32,8 +32,9 @@ public class TestManager
         if (server == null)
         {
             Bootstrap.register();
+            FakeDedicatedServer.exceptionHandler = errorHandler;
+
             server = FakeWorldServer.createServer(name);
-            server.exceptionHandler = errorHandler;
         }
         return server;
     }
