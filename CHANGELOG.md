@@ -3,6 +3,16 @@
 
 Record of version changes for developers
 
+## 1.3.0 - Jan 3rd, 2020
+
+Breaking change for previous versions
+
+* Removed: Any calls to junit lib not inside a unit test
+* Removed: test prefabs due to lack of usage and dep on junit
+* Removed: Temp file creation in dedicated server due to crashes while creating the server (inconsistant)
+* Added: Error handler to dedicated server to allow redirecting errors to unit test fail calls
+* Changed: TestManager to require error handler 'Assertions::fail' for junit 5
+
 ## 1.2.0 - Jan 3rd, 2020
 
 * Added: Reflection helper for removing final
