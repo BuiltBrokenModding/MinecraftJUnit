@@ -1,5 +1,6 @@
 package com.builtbroken.mc.testing.junit.server;
 
+import com.builtbroken.mc.testing.junit.helpers.ReflectionHelpers;
 import com.mojang.authlib.GameProfileRepository;
 import com.mojang.authlib.minecraft.MinecraftSessionService;
 import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
@@ -11,6 +12,7 @@ import net.minecraft.profiler.Snooper;
 import net.minecraft.server.dedicated.DedicatedPlayerList;
 import net.minecraft.server.dedicated.DedicatedServer;
 import net.minecraft.server.dedicated.PropertyManager;
+import net.minecraft.server.management.PlayerList;
 import net.minecraft.server.management.PlayerProfileCache;
 import net.minecraft.server.management.PreYggdrasilConverter;
 import net.minecraft.util.NonNullList;
@@ -26,7 +28,6 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.net.Proxy;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -77,28 +78,32 @@ public class FakeDedicatedServer extends DedicatedServer
     @Override
     public boolean init()
     {
-        final PropertyManager settings = new PropertyManager(new File("server.properties"))
-        {
-            @Override
-            public void generateNewProperties()
-            {
-                //DO not save file to system
-                //LOGGER.info("Generating new properties file");
-                //this.saveProperties();
-            }
-        };
-
         try
         {
-            Field field = DedicatedServer.class.getDeclaredField("settings");
-            field.setAccessible(true);
-            field.set(this, settings);
-        }
-        catch (Exception e)
+            final PropertyManager settings = new PropertyManager(File.createTempFile("server", "properties"))
+            {
+                @Override
+                public void generateNewProperties()
+                {
+                    //DO not save file to system
+                    //LOGGER.info("Generating new properties file");
+                    //this.saveProperties();
+                }
+            };
+
+            //Override settings manager
+            ReflectionHelpers.setPrivateField(DedicatedServer.class, "settings", this, settings);
+
+            //Override save files
+            ReflectionHelpers.setStaticField(PlayerList.class, "FILE_PLAYERBANS", File.createTempFile("banned-players", "json"));
+            ReflectionHelpers.setStaticField(PlayerList.class, "FILE_IPBANS", File.createTempFile("banned-ips", "json"));
+            ReflectionHelpers.setStaticField(PlayerList.class, "FILE_OPS", File.createTempFile("ops", "json"));
+            ReflectionHelpers.setStaticField(PlayerList.class, "FILE_WHITELIST", File.createTempFile("whitelist", "json"));
+
+        } catch (Exception e)
         {
             throw new RuntimeException(e);
         }
-
 
         if (this.isSinglePlayer())
         {
@@ -204,8 +209,7 @@ public class FakeDedicatedServer extends DedicatedServer
                     {
                         k = l;
                     }
-                }
-                catch (NumberFormatException var16)
+                } catch (NumberFormatException var16)
                 {
                     k = (long) s.hashCode();
                 }
