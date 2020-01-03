@@ -13,6 +13,7 @@ import org.junit.jupiter.api.BeforeAll;
 public class TestFakeWorldServer extends TestFakeWorld
 {
     static FakeDedicatedServer server;
+    static FakeWorldServer world;
 
     @BeforeAll
     public static void setUpForEntireClass()

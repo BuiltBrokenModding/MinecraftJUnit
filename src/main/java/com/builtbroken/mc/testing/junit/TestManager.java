@@ -6,7 +6,8 @@ import com.builtbroken.mc.testing.junit.world.FakeWorldServer;
 import net.minecraft.init.Bootstrap;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.DimensionManager;
-import org.junit.jupiter.api.Assertions;
+
+import java.util.function.Consumer;
 
 /**
  * Created by Dark(DarkGuardsman, Robert) on 12/31/2019.
@@ -95,17 +96,17 @@ public class TestManager
         }
     }
 
-    public void lockToCenterChunk() {
+    public void lockToCenterChunk(Consumer<String> fail) {
         //Limits block placements to inside our clean area so we can ensure each test case is valid
         getWorld().setBlockCallback = (pos, state) ->
         {
             if (pos.getX() < 0 || pos.getX() > 15 || pos.getZ() < 0 || pos.getZ() > 15)
             {
-                Assertions.fail("Placed block outside cleanup area: " + pos);
+                fail.accept("Placed block outside cleanup area: " + pos);
             }
             else if (pos.getY() < 0 || pos.getY() >= getWorld().getHeight())
             {
-                Assertions.fail("Placed block outside map area: " + pos);
+                fail.accept("Placed block outside map area: " + pos);
             }
         };
     }

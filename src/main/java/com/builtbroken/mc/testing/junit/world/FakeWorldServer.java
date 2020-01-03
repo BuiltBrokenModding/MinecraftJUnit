@@ -11,9 +11,9 @@ import net.minecraft.world.WorldSettings;
 import net.minecraft.world.WorldType;
 import net.minecraft.world.storage.WorldInfo;
 import net.minecraftforge.common.DimensionManager;
-import org.junit.jupiter.api.Assertions;
 
 import java.io.File;
+import java.util.Optional;
 import java.util.function.BiConsumer;
 
 /**
@@ -59,10 +59,18 @@ public class FakeWorldServer extends WorldServer
         FakeWorldSaveHandler handler = new FakeWorldSaveHandler(worldInfo);
 
         //Check that there is no dim for world
-        Assertions.assertNull(DimensionManager.getWorld(dim));
+        if (DimensionManager.getWorld(dim) != null)
+        {
+            final String worldName = DimensionManager.getWorld(dim).getWorldInfo() != null
+                    ? DimensionManager.getWorld(dim).getWorldInfo().getWorldName()
+                    : null;
+            throw new RuntimeException("World was not cleaned up before test was run. " +
+                    "Make sure to clear the test server between tests. " +
+                    "World: " + worldName);
+        }
 
         //Create world
-        FakeWorldServer world = new FakeWorldServer(worldInfo, server,  new File(baseFolder, name), handler, dim, settings);
+        FakeWorldServer world = new FakeWorldServer(worldInfo, server, new File(baseFolder, name), handler, dim, settings);
 
         //Register world
         DimensionManager.setWorld(0, world, server);
@@ -86,4 +94,4 @@ public class FakeWorldServer extends WorldServer
     {
         return new File(rootFolder, "save");
     }
-    }
+}

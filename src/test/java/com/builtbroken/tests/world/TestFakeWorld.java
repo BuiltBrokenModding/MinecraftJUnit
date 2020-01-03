@@ -1,6 +1,5 @@
 package com.builtbroken.tests.world;
 
-import com.builtbroken.mc.testing.junit.prefabs.WorldTest;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockChest;
 import net.minecraft.block.state.IBlockState;
@@ -18,8 +17,11 @@ import org.junit.jupiter.api.Test;
  * JUnit test for {@link FakeWorld}
  * Created by robert on 11/13/2014.
  */
-public class TestFakeWorld extends WorldTest
+public class TestFakeWorld
 {
+
+    FakeWorld world = FakeWorld.newWorld("fake");
+
     @Test
     public void testBlockRegistry()
     {

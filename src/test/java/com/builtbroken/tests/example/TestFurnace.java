@@ -1,7 +1,6 @@
 package com.builtbroken.tests.example;
 
 import com.builtbroken.mc.testing.junit.TestManager;
-import com.builtbroken.mc.testing.junit.prefabs.AbstractTest;
 import com.builtbroken.mc.testing.junit.testers.TestPlayer;
 import com.builtbroken.mc.testing.junit.world.FakeWorldServer;
 import net.minecraft.block.Block;
@@ -13,6 +12,7 @@ import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.GameType;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -30,14 +30,15 @@ import java.util.stream.Stream;
  *
  * @author Tyler, Dark
  */
-public class TestFurnace extends AbstractTest
+public class TestFurnace
 {
+
     static TestManager testManager = new TestManager("TestFurnace");
 
     @BeforeAll
     public static void beforeAllTests()
     {
-        testManager.lockToCenterChunk();
+        testManager.lockToCenterChunk(Assertions::fail);
     }
 
     @AfterAll
@@ -58,7 +59,8 @@ public class TestFurnace extends AbstractTest
         testManager.cleanupBetweenTests();
     }
 
-    private static Stream<Arguments> provideWorldAndPlayer() {
+    private static Stream<Arguments> provideWorldAndPlayer()
+    {
         return Stream.of(Arguments.of(testManager.getWorld(), testManager.getPlayer()));
     }
 
@@ -67,15 +69,15 @@ public class TestFurnace extends AbstractTest
     public void testSetBlock(FakeWorldServer world, TestPlayer player)
     {
         //Set
-        world.setBlockState(ZERO_POS, Blocks.FURNACE.getDefaultState());
+        world.setBlockState(BlockPos.ORIGIN, Blocks.FURNACE.getDefaultState());
 
         //Check block
-        final IBlockState state = world.getBlockState(ZERO_POS);
+        final IBlockState state = world.getBlockState(BlockPos.ORIGIN);
         final Block block = state.getBlock();
         Assertions.assertEquals(block, Blocks.FURNACE, "Should be a furnace.");
 
         //check tile
-        final TileEntity tile = world.getTileEntity(ZERO_POS);
+        final TileEntity tile = world.getTileEntity(BlockPos.ORIGIN);
         Assertions.assertSame(tile.getClass(), TileEntityFurnace.class, "World.getTileEntity() should have returned a furnace tile. Actually got " + tile);
     }
 
@@ -87,21 +89,21 @@ public class TestFurnace extends AbstractTest
         //  in rare cases dirty tiles can remain due to bad setups
 
         //Place block
-        world.setBlockState(ZERO_POS, Blocks.FURNACE.getDefaultState());
+        world.setBlockState(BlockPos.ORIGIN, Blocks.FURNACE.getDefaultState());
 
         //Validate placement
-        Assertions.assertEquals(world.getBlockState(ZERO_POS).getBlock(), Blocks.FURNACE);
-        Assertions.assertNotNull(world.getTileEntity(ZERO_POS));
+        Assertions.assertEquals(world.getBlockState(BlockPos.ORIGIN).getBlock(), Blocks.FURNACE);
+        Assertions.assertNotNull(world.getTileEntity(BlockPos.ORIGIN));
 
         //Cycle tick once just for fun
         world.updateEntities();
 
         //Remove block
-        world.setBlockToAir(ZERO_POS);
+        world.setBlockToAir(BlockPos.ORIGIN);
 
         //Tick to remove tile
         world.updateEntities();
-        Assertions.assertNull(world.getTileEntity(ZERO_POS), "Tile should have been removed");
+        Assertions.assertNull(world.getTileEntity(BlockPos.ORIGIN), "Tile should have been removed");
     }
 
     @ParameterizedTest
@@ -112,21 +114,21 @@ public class TestFurnace extends AbstractTest
         //  in rare cases dirty tiles can remain due to bad setups
 
         //Place block
-        world.setBlockState(ZERO_POS, Blocks.FURNACE.getDefaultState());
+        world.setBlockState(BlockPos.ORIGIN, Blocks.FURNACE.getDefaultState());
 
         //Validate placement
-        Assertions.assertEquals(world.getBlockState(ZERO_POS).getBlock(), Blocks.FURNACE);
-        Assertions.assertNotNull(world.getTileEntity(ZERO_POS));
+        Assertions.assertEquals(world.getBlockState(BlockPos.ORIGIN).getBlock(), Blocks.FURNACE);
+        Assertions.assertNotNull(world.getTileEntity(BlockPos.ORIGIN));
 
         //Cycle tick once just for fun
         world.updateEntities();
 
         //Remove block
-        world.setBlockState(ZERO_POS, Blocks.DIRT.getDefaultState());
+        world.setBlockState(BlockPos.ORIGIN, Blocks.DIRT.getDefaultState());
 
         //Tick to remove tile
         world.updateEntities();
-        Assertions.assertNull(world.getTileEntity(ZERO_POS), "Tile should have been removed");
+        Assertions.assertNull(world.getTileEntity(BlockPos.ORIGIN), "Tile should have been removed");
     }
 
     @ParameterizedTest
@@ -134,7 +136,7 @@ public class TestFurnace extends AbstractTest
     public void testPlacement(FakeWorldServer world, TestPlayer player)
     {
         //Place something to click
-        world.setBlockState(ZERO_POS, Blocks.DIRT.getDefaultState());
+        world.setBlockState(BlockPos.ORIGIN, Blocks.DIRT.getDefaultState());
 
         //Setup player
         player.setPosition(0, 1, 2);
@@ -144,7 +146,7 @@ public class TestFurnace extends AbstractTest
         //Place block through player
         EnumActionResult actionResult = player.interactionManager.processRightClickBlock(player, world,
                 player.getHeldItem(EnumHand.MAIN_HAND), EnumHand.MAIN_HAND,
-                ZERO_POS, EnumFacing.UP, 0.5f, 0f, 0.5f);
+                BlockPos.ORIGIN, EnumFacing.UP, 0.5f, 0f, 0.5f);
 
         //Validate success state, keep in mind there are more than 1 reason success happened
         Assertions.assertEquals(EnumActionResult.SUCCESS, actionResult);
@@ -153,7 +155,7 @@ public class TestFurnace extends AbstractTest
         Assertions.assertTrue(player.getHeldItem(EnumHand.MAIN_HAND).isEmpty());
 
         //Check block
-        final IBlockState state = world.getBlockState(ZERO_POS.up()); //Block should be 1 above dirt
+        final IBlockState state = world.getBlockState(BlockPos.ORIGIN.up()); //Block should be 1 above dirt
         final Block block = state.getBlock();
         Assertions.assertEquals(block, Blocks.FURNACE, "Should be a furnace.");
     }
