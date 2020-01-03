@@ -36,3 +36,5 @@ whitelist.json
 classes/
 
 server\.properties
+
+run_tests/

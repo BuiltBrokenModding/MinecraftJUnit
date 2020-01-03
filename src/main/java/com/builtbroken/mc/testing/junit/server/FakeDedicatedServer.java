@@ -43,7 +43,6 @@ public class FakeDedicatedServer extends DedicatedServer
     public static Consumer<String> exceptionHandler = (string) -> new RuntimeException(string);
 
     private static final Logger logger = LogManager.getLogger();
-    public final List pendingCommandList = Collections.synchronizedList(new ArrayList());
 
     private static YggdrasilAuthenticationService service = new YggdrasilAuthenticationService(Proxy.NO_PROXY, UUID.randomUUID().toString());
     private static MinecraftSessionService sessionService = service.createMinecraftSessionService();
@@ -98,12 +97,8 @@ public class FakeDedicatedServer extends DedicatedServer
             //Override settings manager
             ReflectionHelpers.setPrivateField(DedicatedServer.class, "settings", this, settings);
 
-            //Override save files
-            ReflectionHelpers.setStaticField(PlayerList.class, "FILE_PLAYERBANS", File.createTempFile("banned-players", "json"));
-            ReflectionHelpers.setStaticField(PlayerList.class, "FILE_IPBANS", File.createTempFile("banned-ips", "json"));
-            ReflectionHelpers.setStaticField(PlayerList.class, "FILE_OPS", File.createTempFile("ops", "json"));
-            ReflectionHelpers.setStaticField(PlayerList.class, "FILE_WHITELIST", File.createTempFile("whitelist", "json"));
-
+            //Override player list
+            this.setPlayerList(new FakeDedicatedPlayerList(this));
 
             if (this.isSinglePlayer())
             {
@@ -186,7 +181,7 @@ public class FakeDedicatedServer extends DedicatedServer
             else
             {
                 //net.minecraftforge.fml.common.FMLCommonHandler.instance().onServerStarted();
-                this.setPlayerList(new DedicatedPlayerList(this));
+                //this.setPlayerList(new FakeDedicatedPlayerList(this));
                 long j = System.nanoTime();
 
                 if (this.getFolderName() == null)
