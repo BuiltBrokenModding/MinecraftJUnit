@@ -4,6 +4,7 @@ import com.builtbroken.mc.testing.junit.server.FakeDedicatedServer;
 import com.builtbroken.mc.testing.junit.world.FakeWorldServer;
 import net.minecraft.init.Bootstrap;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 
 /**
@@ -20,6 +21,7 @@ public class TestFakeWorldServer extends TestFakeWorld
     {
         Bootstrap.register();
         server = FakeWorldServer.createServer("FakeWorldServerTest");
+        server.exceptionHandler = Assertions::fail;
         world = FakeWorldServer.newWorld(server, 0, "FakeWorldServerTest");
     }
 

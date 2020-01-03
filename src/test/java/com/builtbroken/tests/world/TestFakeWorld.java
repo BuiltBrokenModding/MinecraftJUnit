@@ -20,7 +20,7 @@ import org.junit.jupiter.api.Test;
 public class TestFakeWorld
 {
 
-    FakeWorld world = FakeWorld.newWorld("fake");
+    private FakeWorld world = FakeWorld.newWorld("fake");
 
     @Test
     public void testBlockRegistry()

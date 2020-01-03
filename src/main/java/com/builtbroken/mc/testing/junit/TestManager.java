@@ -19,10 +19,12 @@ public class TestManager
     private FakeDedicatedServer server;
 
     private final String name;
+    private final Consumer<String> errorHandler;
 
-    public TestManager(String name)
+    public TestManager(String name, Consumer<String> errorHandler)
     {
         this.name = name;
+        this.errorHandler = errorHandler;
     }
 
     public FakeDedicatedServer getServer()
@@ -31,6 +33,7 @@ public class TestManager
         {
             Bootstrap.register();
             server = FakeWorldServer.createServer(name);
+            server.exceptionHandler = errorHandler;
         }
         return server;
     }

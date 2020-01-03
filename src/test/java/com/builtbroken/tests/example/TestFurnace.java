@@ -33,7 +33,7 @@ import java.util.stream.Stream;
 public class TestFurnace
 {
 
-    static TestManager testManager = new TestManager("TestFurnace");
+    static TestManager testManager = new TestManager("TestFurnace", Assertions::fail);
 
     @BeforeAll
     public static void beforeAllTests()

@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test;
  */
 public class TestSpawning
 {
-    private static TestManager testManager = new TestManager("spawning");
+    private static TestManager testManager = new TestManager("spawning", Assertions::fail);
 
     @AfterEach
     void afterEach() {
