@@ -8,12 +8,17 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.PlayerInteractionManager;
 import net.minecraft.stats.StatBase;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.GameType;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 
 import com.mojang.authlib.GameProfile;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.Queue;
 import java.util.UUID;
 
 /**
@@ -22,24 +27,10 @@ import java.util.UUID;
 public class TestPlayer extends EntityPlayerMP
 {
 
-    /**
-     * Toggle to print received chat messages to console.
-     */
-    public boolean outputChat = false;
-    /**
-     * Toggle to throw errors when chat messages are received, useful for checking if chat messages are outputted correctly... or at all.
-     */
-    public boolean throwErrorsWhenReceivingChat = false;
-    /**
-     * Toggle to throw errors when stats are received, useful for checking if stats are received correctly... or at all.
-     */
-    public boolean throwErrorsWhenReceivingStats = false;
-    /**
-     * Toggle to throw errors when guis are opened, useful for checking if guis are opened correctly... or at all.
-     */
-    public boolean throwErrorsWhenOpeningGUI = false;
-
     private static GameProfile PROFILE_DEFAULT = new GameProfile(UUID.fromString("41C82C87-7AfB-4024-BA57-13D2C99CAE76"), "[UNIT_TESTER]");
+
+    public final Queue<ImmutablePair<StatBase, Integer>> statsReceived = new LinkedList();
+    public final Queue<ITextComponent> messages = new LinkedList();
 
     /**
      * Only constructor for this class
@@ -61,19 +52,23 @@ public class TestPlayer extends EntityPlayerMP
     @Override
     public void addStat(StatBase par1StatBase, int par2)
     {
-        if (throwErrorsWhenReceivingStats)
-        {
-            throw new RuntimeException(par1StatBase + "  " + par2);
-        }
+        statsReceived.offer(new ImmutablePair(par1StatBase, par2));
     }
 
     @Override
     public void openGui(Object mod, int modGuiId, World world, int x, int y, int z)
     {
-        if (throwErrorsWhenOpeningGUI)
-        {
-            throw new RuntimeException("mod:" + mod + " id:" + modGuiId + " dim:" + world.provider.getDimension() + " " + x + "x " + y + "y " + z + "z");
-        }
+
+    }
+
+    @Override
+    public void sendMessage(ITextComponent component)
+    {
+        this.messages.offer(component);
+    }
+
+    public String pollLastMessage() {
+        return messages.poll().getUnformattedText();
     }
 
     @Override
@@ -108,7 +103,7 @@ public class TestPlayer extends EntityPlayerMP
         this.setLocationAndAngles(0, 0, 0, 0, 0);
         for (EntityEquipmentSlot slotIn : EntityEquipmentSlot.values())
         {
-            this.setItemStackToSlot (slotIn, ItemStack.EMPTY);
+            this.setItemStackToSlot(slotIn, ItemStack.EMPTY);
         }
         inventory.clear();
         this.inventory.currentItem = 0;
