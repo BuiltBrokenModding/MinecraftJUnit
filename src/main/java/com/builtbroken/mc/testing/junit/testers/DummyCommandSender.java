@@ -66,6 +66,10 @@ public class DummyCommandSender implements ICommandSender
         messages.offer(component);
     }
 
+    public String pollLastMessage() {
+        return messages.poll().getUnformattedText();
+    }
+
     @Override
     public BlockPos getPosition()
     {
