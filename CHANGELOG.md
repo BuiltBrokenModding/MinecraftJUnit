@@ -3,6 +3,14 @@
 
 Record of version changes for developers
 
+## 1.3.1 - Jan 6th, 2020
+
+* Added: pollLastMessage() to DummyCommandSender to get text version of chat
+* Added: message queue to TestPlayer
+* Added: stat queue to TestPlayer
+* Removed: Exception throwing mechanic for chat messages in TestPlayer
+* Removed: Exception throwing mechanic for UI open in TestPlayer (will replace later)
+
 ## 1.3.0 - Jan 3rd, 2020
 
 Breaking change for previous versions
