@@ -3,6 +3,10 @@
 
 Record of version changes for developers
 
+## 1.3.2 - Jan 12th, 2020
+
+* Fixed: Player not clearing between tests
+
 ## 1.3.1 - Jan 6th, 2020
 
 * Added: pollLastMessage() to DummyCommandSender to get text version of chat
