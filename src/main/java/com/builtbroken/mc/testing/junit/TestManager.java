@@ -63,7 +63,11 @@ public class TestManager
      */
     public void tearDownTest()
     {
+        cleanupBetweenTests();
         getServer().dispose();
+        server = null;
+        world = null;
+        player = null;
     }
 
     /**
@@ -74,6 +78,7 @@ public class TestManager
         if (player != null)
         {
             player.reset();
+            player = null;
         }
 
         if (world != null)
