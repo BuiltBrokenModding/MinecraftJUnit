@@ -207,7 +207,7 @@ public class FakeDedicatedServer extends DedicatedServer
                     }
                 }
 
-                WorldType worldtype = WorldType.byName(s1);
+                WorldType worldtype = WorldType.parseWorldType(s1);
 
                 if (worldtype == null)
                 {

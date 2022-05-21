@@ -1,1 +1,0 @@
-sudo ./gradlew clean setupdecompworkspace IDEA genIntellijRuns --refresh-dependencies

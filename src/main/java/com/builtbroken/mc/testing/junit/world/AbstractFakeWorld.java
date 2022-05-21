@@ -53,7 +53,7 @@ public class AbstractFakeWorld extends World
                 return false;
             } else
             {
-                Chunk chunk = this.getChunk(x >> 4, z >> 4);
+                Chunk chunk = this.getChunkFromChunkCoords(x >> 4, z >> 4);
                 debug("setBlock() chunk = " + chunk);
                 net.minecraftforge.common.util.BlockSnapshot blockSnapshot = null;
 
