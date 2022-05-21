@@ -92,7 +92,7 @@ public class TestPlayer extends EntityPlayerMP
 
     /**
      * Clears the data assigned to the test player.
-     * <p/>
+     *
      * Set location to 0x 0y 0z 0yaw 0 pitch
      * Clears inventory
      * Clears armor
