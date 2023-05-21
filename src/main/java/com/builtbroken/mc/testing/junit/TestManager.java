@@ -3,28 +3,47 @@ package com.builtbroken.mc.testing.junit;
 import com.builtbroken.mc.testing.junit.server.FakeDedicatedServer;
 import com.builtbroken.mc.testing.junit.testers.TestPlayer;
 import com.builtbroken.mc.testing.junit.world.FakeWorldServer;
+import com.mojang.authlib.GameProfile;
 import net.minecraft.init.Bootstrap;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.DimensionManager;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 /**
  * Created by Dark(DarkGuardsman, Robert) on 12/31/2019.
  */
 public class TestManager
 {
-    private FakeWorldServer world;
-    private TestPlayer player;
+    private final Map<Integer, FakeWorldServer> worlds = new HashMap<>();
+    private final Map<GameProfile, TestPlayer> players = new HashMap<>();
     private FakeDedicatedServer server;
 
     private final String name;
     private final Consumer<String> errorHandler;
 
+    /** Used to wrap worlds, useful for setting up mockito spies */
+    private Function<FakeWorldServer, FakeWorldServer> worldWrapper;
+    /** Used to wrap worlds, useful for setting up mockito spies */
+    private Function<TestPlayer, TestPlayer> playerWrapper;
+
     public TestManager(String name, Consumer<String> errorHandler)
     {
         this.name = name;
         this.errorHandler = errorHandler;
+    }
+
+    public TestManager withWorldWrapper(Function<FakeWorldServer, FakeWorldServer> worldWrapper) {
+        this.worldWrapper = worldWrapper;
+        return this;
+    }
+
+    public TestManager withPlayerWrapper(Function<TestPlayer, TestPlayer> wrapper) {
+        this.playerWrapper = wrapper;
+        return this;
     }
 
     public FakeDedicatedServer getServer()
@@ -39,23 +58,41 @@ public class TestManager
         return server;
     }
 
+    @Deprecated
     public FakeWorldServer getWorld()
     {
-        if (world == null)
-        {
-            world = FakeWorldServer.newWorld(getServer(), 0, name);
-            world.init();
-        }
-        return world;
+        return getWorld(0);
     }
 
-    public TestPlayer getPlayer()
+    public FakeWorldServer getWorld(int id)
     {
-        if (player == null)
+        initWorld(id);
+        return worlds.get(id);
+    }
+
+    public void initWorld(int id) {
+        if (!worlds.containsKey(id))
         {
-            player = new TestPlayer(getServer(), getWorld());
+            final FakeWorldServer world = FakeWorldServer.newWorld(getServer(), id, name);
+            world.init();
+
+            worlds.put(id, worldWrapper != null ? worldWrapper.apply(world) : world);
         }
-        return player;
+    }
+
+    @Deprecated
+    public TestPlayer getPlayer() {
+        return getPlayer(0, null);
+    }
+
+    public TestPlayer getPlayer(int worldId, GameProfile profile)
+    {
+        if (!players.containsKey(profile))
+        {
+            final TestPlayer player = new TestPlayer(getServer(), getWorld(worldId), profile);
+            players.put(profile, playerWrapper != null ? playerWrapper.apply(player) : player);
+        }
+        return players.get(profile);
     }
 
     /**
@@ -65,9 +102,7 @@ public class TestManager
     {
         cleanupBetweenTests();
         getServer().dispose();
-        server = null;
-        world = null;
-        player = null;
+        cleanupBetweenTests();
     }
 
     /**
@@ -75,17 +110,13 @@ public class TestManager
      */
     public void cleanupBetweenTests()
     {
-        if (player != null)
-        {
-            player.reset();
-            player = null;
-        }
+        players.values().forEach(TestPlayer::reset);
+        players.clear();
 
-        if (world != null)
-        {
-            DimensionManager.setWorld(0, null, getServer());
-            world = null;
-        }
+        worlds.values().forEach(world -> {
+            DimensionManager.setWorld(world.provider.getDimension(), null, getServer());
+        });
+        worlds.clear();
     }
 
     public void clearCenterChunk()

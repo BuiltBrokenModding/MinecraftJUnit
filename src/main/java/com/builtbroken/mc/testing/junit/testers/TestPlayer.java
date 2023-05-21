@@ -41,9 +41,10 @@ public class TestPlayer extends EntityPlayerMP
      */
     public TestPlayer(MinecraftServer server, WorldServer world, GameProfile profile)
     {
-        super(server, world, profile, new PlayerInteractionManager(world));
+        super(server, world, profile != null ? profile : PROFILE_DEFAULT, new PlayerInteractionManager(world));
     }
 
+    @Deprecated
     public TestPlayer(MinecraftServer server, WorldServer world)
     {
         super(server, world, PROFILE_DEFAULT, new PlayerInteractionManager(world));
